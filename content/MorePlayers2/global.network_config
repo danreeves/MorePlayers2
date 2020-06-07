@@ -27,7 +27,7 @@ types={
   rotation={type="quaternion" bits=19 tolerance=0.01}
   string={type="string"}
   string_array={type="array" element="string" max_size=3}
-  local_player_id={type="int" min=0 max=32}
+  local_player_id={type="int" min=0 max=32} // MODIFIED
   anim_event={type="int" min=1 max=2048}
   game_object_id={type="int" min=0 max=65535}
   lookup={type="int" min=1 max=2048}
@@ -102,7 +102,7 @@ types={
   light_weight_projectile_speed={type="int" min=1 max=128}
   light_weight_projectile_index={type="int" min=1 max=128}
   light_weight_projectile_lookup={type="int" min=1 max=8}
-  vote_data_peer_id={type="array" element="peer_id" max_size=4}
+  vote_data_peer_id={type="array" element="peer_id" max_size=32} // MODIFIED
   vote_data_lookup={type="array" element="lookup" max_size=9}
   vote_data_deed={type="array" element="weapon_id" max_size=4}
   backend_session_id={type="int" min=0 max=4294967295}
@@ -181,7 +181,7 @@ types={
   tentacle_state={type="int" min=1 max=8}
   talent_id={type="int" min=0 max=256}
   debug_command_lookup={type="int" min=1 max=7}
-  peer_id_table={type="array" element="peer_id" max_size=8}
+  peer_id_table={type="array" element="peer_id" max_size=32} // MODIFIED
   twitch_lookup={type="int" min=0 max=1023}
   twitch_options={type="array" element="uint_16" max_size=5}
   twitch_template_lookup={type="array" element="twitch_lookup" max_size=5}

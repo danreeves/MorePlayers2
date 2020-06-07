@@ -70,6 +70,9 @@ mod:hook(GameSession, "game_object_field", function(func, self, go_id, key, ...)
   --       a certain type and then errors when it gets nil
   local go_exists = GameSession.game_object_exists(self, go_id)
   if not go_exists then
+    if key == "current_health" then
+      return 0
+    end
     return
   end
 
@@ -534,6 +537,189 @@ mod:hook_origin(DamageUtils, "process_projectile_hit", function (world, damage_s
   end
 
   return hit_data
+end)
+
+mod:hook_origin(DamageUtils, "_projectile_hit_character", function (current_action, owner_unit, owner_player, owner_buff_extension, target_settings, hit_unit, hit_actor, hit_position, hit_rotation, hit_normal, is_husk, breed, is_server, check_buffs, is_critical_strike, difficulty_rank, power_level, ranged_boost_curve_multiplier, damage_profile, damage_source, critical_hit_effect, world, hit_effect, attack_direction, damage_source_id, damage_profile_id, max_targets, current_num_penetrations, current_amount_of_mass_hit, target_number)
+  local hit_units = HIT_UNITS
+  local hit_data = HIT_DATA
+  local network_manager = Managers.state.network
+  local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(owner_unit)
+  local hit_unit_id, _ = network_manager:game_object_or_level_id(hit_unit)
+  local hit_zone_name = "torso"
+  local predicted_damage = 0
+  local shield_blocked = false
+  local num_penetrations = current_num_penetrations
+  local amount_of_mass_hit = current_amount_of_mass_hit
+
+  if breed then
+    local node = actor_node(hit_actor)
+    local hit_zone = breed.hit_zones_lookup[node]
+    -- MODIFIED: Check for hit_zone before indexing it
+    if hit_zone then
+      hit_zone_name = hit_zone.name
+
+      if hit_zone_name ~= "afro" then
+        shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit) and not current_action.ignore_shield_hit
+
+        if shield_blocked then
+          hit_data.blocked_by_unit = hit_unit
+        end
+      end
+    end
+  end
+
+  if current_action.hit_zone_override and hit_zone_name ~= "afro" then
+    hit_zone_name = current_action.hit_zone_override
+  end
+
+  if breed and hit_zone_name == "head" and owner_player and not shield_blocked then
+    local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+    local _, procced = owner_buff_extension:apply_buffs_to_value(0, "coop_stamina")
+
+    if procced and AiUtils.unit_alive(hit_unit) then
+      local headshot_coop_stamina_fatigue_type = breed.headshot_coop_stamina_fatigue_type or "headshot_clan_rat"
+      local fatigue_type_id = NetworkLookup.fatigue_types[headshot_coop_stamina_fatigue_type]
+
+      if is_server then
+        network_manager.network_transmit:send_rpc_clients("rpc_replenish_fatigue_other_players", fatigue_type_id)
+      else
+        network_manager.network_transmit:send_rpc_server("rpc_replenish_fatigue_other_players", fatigue_type_id)
+      end
+
+      StatusUtils.replenish_stamina_local_players(owner_unit, headshot_coop_stamina_fatigue_type)
+      first_person_extension:play_hud_sound_event("hud_player_buff_headshot", nil, false)
+    end
+
+    if not current_action.no_headshot_sound and AiUtils.unit_alive(hit_unit) then
+      first_person_extension:play_hud_sound_event("Play_hud_headshot", nil, false)
+    end
+  end
+
+  local hit_unit_player = Managers.player:owner(hit_unit)
+
+  if hit_zone_name == "afro" then
+    if breed.is_ai then
+      local attacker_is_player = Managers.player:owner(owner_unit)
+
+      if attacker_is_player then
+        if is_server then
+          if ScriptUnit.has_extension(hit_unit, "ai_system") then
+            AiUtils.alert_unit_of_enemy(hit_unit, owner_unit)
+          end
+        else
+          network_manager.network_transmit:send_rpc_server("rpc_alert_enemy", hit_unit_id, attacker_unit_id)
+        end
+      end
+    end
+  elseif hit_unit_player and hit_actor == unit_actor(hit_unit, "c_afro") then
+    local afro_hit_sound = current_action.afro_hit_sound
+
+    if afro_hit_sound and not hit_unit_player.bot_player and Managers.state.network:game() then
+      local sound_id = NetworkLookup.sound_events[afro_hit_sound]
+
+      network_manager.network_transmit:send_rpc("rpc_play_first_person_sound", hit_unit_player.peer_id, hit_unit_id, sound_id, hit_position)
+    end
+  else
+    hit_units[hit_unit] = true
+    local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
+    local attack_template_name = target_settings.attack_template
+    local attack_template = AttackTemplates[attack_template_name]
+
+    if owner_player and breed and check_buffs and not shield_blocked then
+      local send_to_server = true
+      local buff_type = DamageUtils.get_item_buff_type(damage_source)
+      local buffs_checked = DamageUtils.buff_on_attack(owner_unit, hit_unit, "instant_projectile", is_critical_strike, hit_zone_name, target_number or num_penetrations + 1, send_to_server, buff_type)
+      hit_data.buffs_checked = hit_data.buffs_checked or buffs_checked
+    end
+
+    local target_health_extension = ScriptUnit.extension(hit_unit, "health_system")
+
+    if breed and target_health_extension:is_alive() then
+      local action_mass_override = current_action.hit_mass_count
+
+      if action_mass_override and action_mass_override[breed.name] then
+        local mass_cost = current_action.hit_mass_count[breed.name]
+        amount_of_mass_hit = amount_of_mass_hit + (mass_cost or 1)
+      else
+        amount_of_mass_hit = amount_of_mass_hit + ((shield_blocked and ((breed.hit_mass_counts_block and breed.hit_mass_counts_block[difficulty_rank]) or breed.hit_mass_count_block)) or (breed.hit_mass_counts and breed.hit_mass_counts[difficulty_rank]) or breed.hit_mass_count or 1)
+      end
+    end
+
+    local actual_target_index = math.ceil(amount_of_mass_hit)
+    local damage_sound = attack_template.sound_type
+    predicted_damage = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, BoostCurves[target_settings.boost_curve_type], ranged_boost_curve_multiplier, is_critical_strike, damage_profile, actual_target_index, nil, damage_source)
+    local no_damage = predicted_damage <= 0
+
+    if breed and not breed.is_hero then
+      local enemy_type = breed.name
+
+      if is_critical_strike and critical_hit_effect then
+        EffectHelper.play_skinned_surface_material_effects(critical_hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_husk, enemy_type, damage_sound, no_damage, hit_zone_name, shield_blocked)
+      else
+        EffectHelper.play_skinned_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_husk, enemy_type, damage_sound, no_damage, hit_zone_name, shield_blocked)
+      end
+
+      if Managers.state.network:game() then
+        if is_critical_strike and critical_hit_effect then
+          EffectHelper.remote_play_skinned_surface_material_effects(critical_hit_effect, world, hit_position, hit_rotation, hit_normal, enemy_type, damage_sound, no_damage, hit_zone_name, is_server)
+        else
+          EffectHelper.remote_play_skinned_surface_material_effects(hit_effect, world, hit_position, hit_rotation, hit_normal, enemy_type, damage_sound, no_damage, hit_zone_name, is_server)
+        end
+      end
+    elseif hit_unit_player and breed.is_hero and current_action.player_push_velocity then
+      local hit_unit_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
+      local no_ranged_knockback = hit_unit_buff_extension and hit_unit_buff_extension:has_buff_perk("no_ranged_knockback")
+
+      if not no_ranged_knockback then
+        local status_extension = ScriptUnit.extension(hit_unit, "status_system")
+
+        if not status_extension:is_disabled() then
+          local max_impact_push_speed = current_action.max_impact_push_speed
+          local locomotion = ScriptUnit.extension(hit_unit, "locomotion_system")
+
+          locomotion:add_external_velocity(current_action.player_push_velocity:unbox(), max_impact_push_speed)
+        end
+      end
+    end
+
+    local deal_damage = true
+    local owner_unit_alive = unit_alive(owner_unit)
+
+    if owner_unit_alive and hit_unit_player then
+      local ranged_block = DamageUtils.check_ranged_block(owner_unit, hit_unit, attack_direction, "blocked_ranged")
+      deal_damage = not ranged_block
+      shield_blocked = ranged_block
+    end
+
+    if deal_damage then
+      local weapon_system = Managers.state.entity:system("weapon_system")
+
+      weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", actual_target_index, "blocking", shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", ranged_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "attacker_is_level_unit", attacker_is_level_unit)
+      EffectHelper.player_critical_hit(world, is_critical_strike, owner_unit, hit_unit, hit_position)
+
+      if not owner_player and owner_unit_alive and hit_unit_player and hit_unit_player.bot_player then
+        local bot_ai_extension = ScriptUnit.extension(hit_unit, "ai_system")
+
+        bot_ai_extension:hit_by_projectile(owner_unit)
+      end
+    end
+
+    local dummy_unit_armor = unit_get_data(hit_unit, "armor")
+    local target_unit_armor, _, target_unit_primary_armor, _ = ActionUtils.get_target_armor(hit_zone_name, breed, dummy_unit_armor)
+
+    if no_damage or shield_blocked or target_unit_primary_armor == 6 or target_unit_armor == 2 then
+      max_targets = num_penetrations
+    else
+      num_penetrations = num_penetrations + 1
+    end
+
+    if max_targets <= amount_of_mass_hit then
+      hit_data.stop = true
+      hit_data.hits = num_penetrations
+    end
+  end
+
+  return amount_of_mass_hit, num_penetrations, predicted_damage, shield_blocked
 end)
 -- luacheck: pop
 
