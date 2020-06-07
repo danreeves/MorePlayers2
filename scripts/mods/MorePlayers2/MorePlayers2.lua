@@ -396,8 +396,18 @@ local INDEX_NORMAL = 3
 local INDEX_ACTOR = 4
 local HIT_UNITS = {}
 local HIT_DATA = {}
-local actor_node = Actor.node
+local unit_get_data = Unit.get_data
 local unit_alive = Unit.alive
+local unit_local_position = Unit.local_position
+local unit_local_rotation = Unit.local_rotation
+local unit_world_position = Unit.world_position
+local unit_set_flow_variable = Unit.set_flow_variable
+local unit_flow_event = Unit.flow_event
+local unit_actor = Unit.actor
+local vector3_distance_squared = Vector3.distance_squared
+local actor_position = Actor.position
+local actor_unit = Actor.unit
+local actor_node = Actor.node
 mod:hook_origin(DamageUtils, "process_projectile_hit", function (world, damage_source, owner_unit, is_server, raycast_result, current_action, direction, check_buffs, target, ignore_list, is_critical_strike, power_level, override_damage_profile, target_number)
   table.clear(HIT_UNITS)
   table.clear(HIT_DATA)
