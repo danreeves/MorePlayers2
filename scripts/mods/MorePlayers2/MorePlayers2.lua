@@ -2,7 +2,7 @@
 -- luacheck: globals GameModeAdventure FindProfileIndex SPProfiles PlayerManager GameSession NetworkTransmit RPC MatchmakingUI IngamePlayerListUI UIRenderer EndViewStateScore DamageUtils
 -- luacheck: globals SimpleInventoryExtension UnitFrameUI UnitFramesHandler World Vector2 UIResolution ScriptGUI Color Localize ProfileSynchronizer StateInGameRunning PopupJoinLobbyHandler
 -- luacheck: globals Mod ModManager ResourcePackage ShowCursorStack UIWidgetUtils Utf8 AdventureProfileRules ConflictUtils UISettings Vector3 BeastmenStandardExtension BuffSystem ScriptUnit
--- luacheck: globals NetworkLookup NetworkConstants fassert
+-- luacheck: globals NetworkLookup NetworkConstants fassert TwitchVoteUI
 local mod = get_mod("MorePlayers2")
 local mmo_names = get_mod("MMONames2")
 
@@ -10,7 +10,7 @@ function mod.on_all_mods_loaded()
   mmo_names = get_mod("MMONames2")
 end
 
-local VERSION = "0.5"
+local VERSION = "0.7"
 local MOD_NAME = "[BETA] More Than Four Players"
 local MAX_PLAYERS = 32
 
@@ -928,4 +928,11 @@ mod:hook_origin(BuffSystem, "add_buff", function (self, unit, template_name, att
   end
 
   return server_buff_id
+end)
+
+mod:hook(TwitchVoteUI, "_sorted_player_list", function (func, self)
+  local players = func(self)
+  table.shuffle(players)
+  local sliced_players = table.slice(players, 1, 4)
+  return sliced_players
 end)
