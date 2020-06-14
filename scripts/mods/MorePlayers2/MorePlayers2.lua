@@ -4,7 +4,9 @@
 -- luacheck: globals Mod ModManager ResourcePackage ShowCursorStack UIWidgetUtils Utf8 AdventureProfileRules ConflictUtils UISettings Vector3 BeastmenStandardExtension BuffSystem ScriptUnit
 -- luacheck: globals NetworkLookup NetworkConstants fassert
 local mod = get_mod("MorePlayers2")
+local mmo_names = get_mod("MMONames2")
 
+local VERSION = "0.4"
 local MOD_NAME = "[BETA] More Than Four Players"
 local MAX_PLAYERS = 32
 
@@ -28,7 +30,7 @@ local network_options = {
 local logged = false
 mod:hook_origin(LobbyManager, "setup_network_options", function(self, increment_lobby_port)
   if not logged then
-    mod:echo(MOD_NAME .. " Enabled")
+    mod:echo(MOD_NAME .. " | v" .. VERSION)
     logged = true
   end
   local lobby_port = script_data.server_port or script_data.settings.server_port or network_options.lobby_port
@@ -71,6 +73,9 @@ mod:hook(GameSession, "game_object_field", function(func, self, go_id, key, ...)
   local go_exists = GameSession.game_object_exists(self, go_id)
   if not go_exists then
     if key == "current_health" then
+      return 0
+    end
+    if key == "temporary_health" then
       return 0
     end
     return
@@ -259,6 +264,13 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
         local text = data.display_name or ""
         local color = WHITE
         local shadow = BLACK
+
+        -- if mmo_names and player_data then
+        -- if player_data.peer_id then
+        -- local player_color = mmo_names.player_colors[player_data.peer_id]
+        -- color = {255, player_color[1], player_color[2], player_color[3]}
+        -- end
+        -- end
 
         local career_name
         if not data.is_dead then
@@ -720,6 +732,146 @@ mod:hook_origin(DamageUtils, "_projectile_hit_character", function (current_acti
   end
 
   return amount_of_mass_hit, num_penetrations, predicted_damage, shield_blocked
+end)
+
+local best_hit_units = {}
+mod:hook_origin(PlayerProjectileUnitExtension, "handle_impacts", function (self, impacts, num_impacts)
+  table.clear(best_hit_units)
+
+  local unit = self._projectile_unit
+  local owner_unit = self._owner_unit
+  local is_server = self._is_server
+  local UNIT_INDEX = ProjectileImpactDataIndex.UNIT
+  local POSITION_INDEX = ProjectileImpactDataIndex.POSITION
+  local DIRECTION_INDEX = ProjectileImpactDataIndex.DIRECTION
+  local NORMAL_INDEX = ProjectileImpactDataIndex.NORMAL
+  local ACTOR_INDEX = ProjectileImpactDataIndex.ACTOR_INDEX
+  local hit_units = self._hit_units
+  local hit_afro_units = self._hit_afro_units
+  local impact_data = self._impact_data
+  local network_manager = Managers.state.network
+  local network_transmit = network_manager.network_transmit
+  local unit_id = network_manager:unit_game_object_id(unit)
+  local pos_min = NetworkConstants.position.min
+  local pos_max = NetworkConstants.position.max
+
+  for i = 1, num_impacts / ProjectileImpactDataIndex.STRIDE, 1 do
+    local j = (i - 1) * ProjectileImpactDataIndex.STRIDE
+    local hit_position = impacts[j + POSITION_INDEX]:unbox()
+    local hit_unit = impacts[j + UNIT_INDEX]
+    local actor_index = impacts[j + ACTOR_INDEX]
+    local hit_actor = Unit.actor(hit_unit, actor_index)
+    local breed = AiUtils.unit_breed(hit_unit)
+
+    if breed then
+      local node = Actor.node(hit_actor)
+      local hit_zone = breed.hit_zones_lookup[node]
+
+      -- MODIFIED. Check we have hit_zone before indexing it
+      if hit_zone then
+        if hit_zone and hit_zone.name ~= "afro" then
+          local potential_hit_zone = best_hit_units[hit_unit]
+
+          if not potential_hit_zone or (potential_hit_zone and hit_zone.prio < potential_hit_zone.prio) then
+            best_hit_units[hit_unit] = hit_zone
+          end
+        elseif not hit_afro_units[hit_unit] and hit_zone and hit_zone.name == "afro" then
+          self:_alert_enemy(hit_unit, owner_unit)
+
+          hit_afro_units[hit_unit] = true
+        end
+      end
+    end
+  end
+
+  for i = 1, num_impacts / ProjectileImpactDataIndex.STRIDE, 1 do
+    repeat
+      if self._stop_impacts then
+        return
+      end
+
+      local j = (i - 1) * ProjectileImpactDataIndex.STRIDE
+      local hit_unit = impacts[j + UNIT_INDEX]
+      local hit_position = impacts[j + POSITION_INDEX]:unbox()
+      local hit_direction = impacts[j + DIRECTION_INDEX]:unbox()
+      local hit_normal = impacts[j + NORMAL_INDEX]:unbox()
+      local actor_index = impacts[j + ACTOR_INDEX]
+      local hit_actor = Unit.actor(hit_unit, actor_index)
+      local valid_position = self:validate_position(hit_position, pos_min, pos_max)
+
+      if not valid_position then
+        self:stop()
+      end
+
+      hit_unit, hit_actor = ActionUtils.redirect_shield_hit(hit_unit, hit_actor)
+      local hit_self = hit_unit == owner_unit
+
+      if not hit_self and valid_position and not hit_units[hit_unit] then
+        local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+
+        if hud_extension then
+          hud_extension.show_critical_indication = false
+        end
+
+        local breed = AiUtils.unit_breed(hit_unit)
+
+        if breed then
+          local best_hit_zone = best_hit_units[hit_unit]
+
+          if best_hit_zone then
+            local node = Actor.node(hit_actor)
+            local hit_zone = breed.hit_zones_lookup[node]
+
+            if hit_zone.name == best_hit_zone.name then
+              hit_units[hit_unit] = true
+            else
+              break
+            end
+          else
+            break
+          end
+        else
+          hit_units[hit_unit] = true
+        end
+
+        local level_index, is_level_unit = network_manager:game_object_or_level_id(hit_unit)
+
+        if is_server then
+          if is_level_unit then
+            network_transmit:send_rpc_clients("rpc_player_projectile_impact_level", unit_id, level_index, hit_position, hit_direction, hit_normal, actor_index)
+          elseif level_index then
+            network_transmit:send_rpc_clients("rpc_player_projectile_impact_dynamic", unit_id, level_index, hit_position, hit_direction, hit_normal, actor_index)
+          end
+        elseif is_level_unit then
+          network_transmit:send_rpc_server("rpc_player_projectile_impact_level", unit_id, level_index, hit_position, hit_direction, hit_normal, actor_index)
+        elseif level_index then
+          network_transmit:send_rpc_server("rpc_player_projectile_impact_dynamic", unit_id, level_index, hit_position, hit_direction, hit_normal, actor_index)
+        end
+
+        local side_manager = Managers.state.side
+        local is_enemy = side_manager:is_enemy(owner_unit, hit_unit)
+        local has_ranged_boost, ranged_boost_curve_multiplier = ActionUtils.get_ranged_boost(owner_unit)
+
+        if breed then
+          if is_enemy then
+            self:hit_enemy(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, has_ranged_boost, ranged_boost_curve_multiplier)
+
+            local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
+
+            if buff_extension then
+              buff_extension:trigger_procs("on_ranged_hit")
+            end
+          elseif breed.is_player then
+            self:hit_player(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, has_ranged_boost, ranged_boost_curve_multiplier)
+          end
+        elseif is_level_unit or Unit.get_data(hit_unit, "is_dummy") then
+          self:hit_level_unit(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, level_index, has_ranged_boost, ranged_boost_curve_multiplier)
+        elseif not is_level_unit then
+          self:hit_non_level_unit(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, has_ranged_boost, ranged_boost_curve_multiplier)
+        end
+      end
+    until true
+  end
 end)
 -- luacheck: pop
 
