@@ -36,6 +36,11 @@ return {
         range = {0, 255},
         default_value = 18,
       },
+      {
+        setting_id = "use_mmo_names_colors",
+        type = "checkbox",
+        default_value = false
+      },
     },
   },
 }

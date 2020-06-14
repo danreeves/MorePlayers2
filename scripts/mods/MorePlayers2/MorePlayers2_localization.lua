@@ -23,4 +23,7 @@ return {
   hell_shark_header = {
     en = "Hell Shark Header",
   },
+  use_mmo_names_colors = {
+    en = "Use MMO Names player color"
+  },
 }

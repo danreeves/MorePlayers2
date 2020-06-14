@@ -6,7 +6,11 @@
 local mod = get_mod("MorePlayers2")
 local mmo_names = get_mod("MMONames2")
 
-local VERSION = "0.4"
+function mod.on_all_mods_loaded()
+  mmo_names = get_mod("MMONames2")
+end
+
+local VERSION = "0.5"
 local MOD_NAME = "[BETA] More Than Four Players"
 local MAX_PLAYERS = 32
 
@@ -76,6 +80,12 @@ mod:hook(GameSession, "game_object_field", function(func, self, go_id, key, ...)
       return 0
     end
     if key == "temporary_health" then
+      return 0
+    end
+    if key == "current_temporary_health" then
+      return 0
+    end
+    if key == "max_health" then
       return 0
     end
     return
@@ -265,12 +275,16 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
         local color = WHITE
         local shadow = BLACK
 
-        -- if mmo_names and player_data then
-        -- if player_data.peer_id then
-        -- local player_color = mmo_names.player_colors[player_data.peer_id]
-        -- color = {255, player_color[1], player_color[2], player_color[3]}
-        -- end
-        -- end
+        if mod:get("use_mmo_names_colors") then
+          if mmo_names and player_data then
+            if player_data.peer_id then
+              local player_color = mmo_names.player_colors[player_data.peer_id]
+              if player_color then
+                color = {255, player_color[1], player_color[2], player_color[3]}
+              end
+            end
+          end
+        end
 
         local career_name
         if not data.is_dead then
@@ -385,9 +399,11 @@ ModManager.unload_mod = function (self, index)
 end
 
 mod:hook_safe(BeastmenStandardExtension, "init", function(self)
-  local astar_data = self.player_astar_data[1]
-  for i = 1, MAX_PLAYERS, 1 do
-    self.player_astar_data[i] = astar_data
+  if self.is_server then
+    local astar_data = self.player_astar_data[1]
+    for i = 1, MAX_PLAYERS, 1 do
+      self.player_astar_data[i] = astar_data
+    end
   end
 end)
 
