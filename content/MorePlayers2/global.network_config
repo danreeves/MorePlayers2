@@ -74,7 +74,7 @@ types={
   int_position={type="array" element="pos_int" max_size=3}
   rot_int={type="int" min=-255 max=255}
   int_rotation={type="array" element="rot_int" max_size=4}
-  inventory_package_list={type="array" element="weapon_id" max_size=80}
+  inventory_package_list={type="array" element="weapon_id" max_size=160} // MODIFIED
   fatigue_points={type="int" min=1 max=32}
   taunt_duration={type="float" min=0 max=15.75 bits=6}
   taunt_radius={type="float" min=0 max=15.75 bits=6}
