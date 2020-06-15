@@ -11,7 +11,7 @@ function mod.on_all_mods_loaded()
 end
 
 local VERSION = "0.8"
-local MOD_NAME = "[BETA] More Than Four Players"
+local MOD_NAME = "[BETA] BTMP"
 local MAX_PLAYERS = 32
 
 script_data.cap_num_bots = 0

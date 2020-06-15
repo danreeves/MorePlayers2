@@ -2,7 +2,7 @@
 local mod = get_mod("MorePlayers2")
 
 return {
-  name = "Bless This Many Players 2",
+  name = "[BETA] BTMP",
   description = mod:localize("mod_description"),
   is_togglable = false,
   custom_gui_textures = {
