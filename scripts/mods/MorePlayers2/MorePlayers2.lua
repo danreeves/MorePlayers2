@@ -5,7 +5,7 @@ function mod.on_all_mods_loaded()
   mod.mmo_names = get_mod("MMONames2")
 end
 
-mod.VERSION = "0.14"
+mod.VERSION = "0.16"
 mod.MOD_NAME = "[BETA] BTMP"
 mod.MAX_PLAYERS = 32
 mod.ID = "2113204803"-- Steam Workshop ID
@@ -21,7 +21,7 @@ mod:dofile("scripts/mods/MorePlayers2/src/fix/playerlist")
 mod:dofile("scripts/mods/MorePlayers2/src/fix/beastmen_standard")
 mod:dofile("scripts/mods/MorePlayers2/src/fix/conflict_utils")
 mod:dofile("scripts/mods/MorePlayers2/src/fix/projectiles")
--- mod:dofile("scripts/mods/MorePlayers2/src/fix/buffs")
+mod:dofile("scripts/mods/MorePlayers2/src/fix/buffs")
 
 -- UI
 mod:dofile("scripts/mods/MorePlayers2/src/ui/tabmenu")

@@ -8,6 +8,5 @@ mod:hook(GameModeAdventure, "_get_first_available_bot_profile", function ()
   -- local profile_index = bot_count % 5 + 1
   -- local career_index = bot_count % 3 + 1
   -- return profile_index, career_index
-  -- Slayers lol
-  return 5, 3
+  return 5, 2
 end)
