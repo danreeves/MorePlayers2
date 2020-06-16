@@ -172,3 +172,5 @@ end)
 -- Handmaiden nearby cooldown reduction Asrai Grace
 -- FK nearby damage reduction That's Bloody Teamwork
 -- IB nearby power increase Blood of Grimnir
+-- activate_buff_stacks_based_on_ally_proximity
+-- https://github.com/Aussiemon/Vermintide-2-Source-Code/blob/8195d52e59105424afc97d5442fc24e8388eeb77/scripts/unit_extensions/default_player_unit/buffs/buff_function_templates.lua#L1779
