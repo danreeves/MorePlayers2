@@ -166,11 +166,69 @@ mod:hook_origin(BuffFunctionTemplates.functions, "activate_buff_on_distance", fu
   end
 end)
 
+-- Handle IB, FK, & HM buff for x nearby allies talents
+mod:hook_origin(BuffFunctionTemplates.functions, "activate_buff_stacks_based_on_ally_proximity", function (unit, buff, params)
+  if not Managers.state.network.is_server then
+    return
+  end
 
--- TODO
---
--- Handmaiden nearby cooldown reduction Asrai Grace
--- FK nearby damage reduction That's Bloody Teamwork
--- IB nearby power increase Blood of Grimnir
--- activate_buff_stacks_based_on_ally_proximity
--- https://github.com/Aussiemon/Vermintide-2-Source-Code/blob/8195d52e59105424afc97d5442fc24e8388eeb77/scripts/unit_extensions/default_player_unit/buffs/buff_function_templates.lua#L1779
+  local buff_extension = ScriptUnit.extension(unit, "buff_system")
+  local buff_system = Managers.state.entity:system("buff_system")
+  local template = buff.template
+  local range = buff.range
+  local range_squared = range * range
+  local chunk_size = template.chunk_size
+  local buff_to_add = template.buff_to_add
+  local max_stacks = template.max_stacks -- MODIFIED. Fixed bad reference. max_stacks is on template not buff
+  local side = Managers.state.side.side_by_unit[unit]
+  local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+  local own_position = POSITION_LOOKUP[unit]
+  local num_nearby_allies = 0
+  local allies = #player_and_bot_units
+
+  -- MODIFIED. Max stacks is actually 3 but the buff template says 4 :(
+  max_stacks = 3
+
+  for i = 1, allies, 1 do
+    local ally_unit = player_and_bot_units[i]
+
+    if ally_unit ~= unit then
+      local ally_position = POSITION_LOOKUP[ally_unit]
+      local distance_squared = Vector3.distance_squared(own_position, ally_position)
+
+      if distance_squared < range_squared then
+        num_nearby_allies = num_nearby_allies + 1
+      end
+
+      if math.floor(num_nearby_allies / chunk_size) == max_stacks then
+        break
+      end
+    end
+  end
+
+  if not buff.stack_ids then
+    buff.stack_ids = {}
+  end
+
+  local num_chunks = math.floor(num_nearby_allies / chunk_size)
+  local num_buff_stacks = buff_extension:num_buff_type(buff_to_add)
+
+  if num_buff_stacks < num_chunks then
+    local difference = num_chunks - num_buff_stacks
+
+    for i = 1, difference, 1 do
+      local buff_id = buff_system:add_buff(unit, buff_to_add, unit, true)
+      local stack_ids = buff.stack_ids
+      stack_ids[#stack_ids + 1] = buff_id
+    end
+  elseif num_chunks < num_buff_stacks then
+    local difference = num_buff_stacks - num_chunks
+
+    for i = 1, difference, 1 do
+      local stack_ids = buff.stack_ids
+      local buff_id = table.remove(stack_ids, 1)
+
+      buff_system:remove_server_controlled_buff(unit, buff_id)
+    end
+  end
+end)

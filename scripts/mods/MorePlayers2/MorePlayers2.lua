@@ -29,6 +29,7 @@ mod:dofile("scripts/mods/MorePlayers2/src/ui/matchmaking")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/scoreboard")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/playerlist")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/twitch")
+mod:dofile("scripts/mods/MorePlayers2/src/ui/challenges")
 
 ModManager.unload_mod = function (self, index)
   local m = self._mods[index]
