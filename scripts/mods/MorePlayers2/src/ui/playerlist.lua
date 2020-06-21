@@ -101,9 +101,11 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
         local is_wounded = health_bar_content.is_wounded
 
         local default_widget = widget:_widget_by_feature("default", "dynamic")
-        local default_widget_content = default_widget.content
+        local default_content = default_widget.content
+        local is_connecting = default_content.connecting
 
-        local is_connecting = default_widget_content.connecting
+        local equipment_widget = widget:_widget_by_feature("equipment", "dynamic")
+        local equipment_widget_content = equipment_widget.content
 
         local health_percent = nil
         if show_health and not is_connecting then
@@ -116,8 +118,10 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
           end
         end
 
-        if not is_connecting and not data.assisted_respawn and not data.is_dead and health_percent then
-          text = text .. string.format(" [%d%%]", math.clamp(health_percent, 1, 100))
+        if mod:get("show_hp") then
+          if not is_connecting and not data.assisted_respawn and not data.is_dead and health_percent then
+            text = text .. string.format(" [%d%%]", math.clamp(health_percent, 1, 100))
+          end
         end
 
         if is_connecting then
@@ -154,15 +158,78 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
         -- Text
         UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font, pos, color)
 
+        local width = UIRenderer.text_size(ui_renderer, text, font_material, font_size)
+        local icon_position = pos + Vector3(width - font_size + font_size * 0.25, -(font_size / 3.5), 0)
+        local bg_scale = font_size / 20
+
         -- Wounded icon
         if show_health and is_wounded then
-          local width = UIRenderer.text_size(ui_renderer, text, font_material, font_size)
-          local icon_position = pos + Vector3(width, -(font_size / 3.5), 0)
-          local bg_scale = font_size / 20
+          icon_position = icon_position + Vector3(font_size, 0, 0)
           local bg_icon_position = icon_position - Vector3(bg_scale, bg_scale, 0)
           local bg_icon_size = { icon_size[1] + bg_scale * 2, icon_size[2] + bg_scale * 2}
           UIRenderer.draw_texture(ui_renderer, "tabs_icon_all_selected", bg_icon_position, bg_icon_size, BLACK)
           UIRenderer.draw_texture(ui_renderer, "tabs_icon_all_selected", icon_position, icon_size, WHITE)
+        end
+
+        for index = 1, 3, 1 do
+          local slot = "item_slot_" .. index
+          local icon = equipment_widget_content[slot]
+          local icon_color = WHITE
+          if icon and icon ~= "icons_placeholder" then
+
+            local show_heals = mod:get("show_healing_items") and string.find(icon, "heal")
+            local show_books = (mod:get("show_books") and (string.find(icon, "tome") or string.find(icon, "grim")))
+            local show_pots = mod:get("show_pots") and string.find(icon, "potion")
+            local show_bombs = mod:get("show_bombs") and string.find(icon, "bomb")
+
+            if show_heals or show_books or show_pots or show_bombs then
+
+
+              icon_position = icon_position + Vector3(font_size, 0, 0)
+              local better_icon_table = {
+                heal_01 = "hud_icon_heal_01",
+                heal_02 = "hud_icon_heal_02",
+                speed = "hud_icon_potion_speed",
+                strength = "hud_icon_potion_strength",
+                cooldown = "hud_icon_potion_cooldown_reduction",
+                hud_inventory_icon_bomb_2 = "hud_icon_bomb_02",
+                hud_inventory_icon_bomb = "hud_icon_bomb_01",
+                tome = "hud_icon_tome",
+                grim = "hud_icon_grimoire",
+              }
+              local color_table = {
+                speed = {255, 0, 200, 255},
+                strength = {255, 255, 200, 0},
+                cooldown = {255, 225, 0, 255},
+                heal = {255, 0, 200, 0},
+                bomb = {255, 255, 255, 255},
+                tome = {255, 200, 0, 0},
+                grim = {255, 200, 0, 0},
+              }
+              for test, icn in pairs(better_icon_table) do
+                if string.find(icon, test) then
+                  icon = icn
+                  break
+                end
+              end
+              for test, col in pairs(color_table) do
+                if string.find(icon, test) then
+                  icon_color = col
+                  break
+                end
+              end
+              if icon == "hud_icon_bomb_02" then
+                local x_offset = icon_size[1] * 0.15
+                local y_offset = icon_size[2] * 0.15
+                local icon_size = { icon_size[1] + x_offset, icon_size[2] + y_offset }
+                local icon_position = icon_position - Vector3(x_offset / 2, y_offset / 2, 0)
+                UIRenderer.draw_texture(ui_renderer, icon .. "_glow", icon_position, icon_size, BLACK)
+              else
+                UIRenderer.draw_texture(ui_renderer, icon .. "_glow", icon_position, icon_size, BLACK)
+              end
+              UIRenderer.draw_texture(ui_renderer, icon, icon_position, icon_size, icon_color)
+            end
+          end
         end
       end
     end

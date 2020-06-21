@@ -41,6 +41,37 @@ return {
         type = "checkbox",
         default_value = false
       },
+      {
+        setting_id = "show_hp",
+        type = "checkbox",
+        default_value = true
+      },
+      {
+        setting_id = "show_healing_items",
+        type = "checkbox",
+        default_value = false
+      },
+      {
+        setting_id = "show_books",
+        type = "checkbox",
+        default_value = false
+      },
+      {
+        setting_id = "show_pots",
+        type = "checkbox",
+        default_value = false
+      },
+      {
+        setting_id = "show_bombs",
+        type = "checkbox",
+        default_value = false
+      },
+      {
+        setting_id = "num_bots",
+        type = "numeric",
+        default_value = 0,
+        range = { 0, 8 },
+      },
     },
   },
 }
