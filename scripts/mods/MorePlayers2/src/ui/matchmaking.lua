@@ -1,4 +1,4 @@
--- luacheck: globals get_mod MatchmakingUI
+-- luacheck: globals get_mod MatchmakingUI MatchmakingStateHostGame
 local mod = get_mod("MorePlayers2")
 
 -- Not very important UI to improve. It doesn't crash but you can't tell
@@ -34,4 +34,8 @@ mod:hook_origin(MatchmakingUI, "_get_party_slot_index_by_peer_id", function (sel
       return i
     end
   end
+end)
+
+mod:hook_safe(MatchmakingStateHostGame, "_start_hosting_game", function ()
+  mod.update_lobby_data()
 end)

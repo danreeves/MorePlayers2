@@ -32,15 +32,22 @@ mod:dofile("scripts/mods/MorePlayers2/src/ui/twitch")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/challenges")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/server_browser")
 
-function mod.on_setting_changed()
-  mod.MAX_PLAYERS = mod:get("max_players")
-  script_data.cap_num_bots = math.min(mod:get("num_bots"), mod.MAX_PLAYERS)
+function mod.update_lobby_data()
   if Managers.player.is_server then
     Managers.lobby:setup_network_options()
     local lobby_data = Managers.matchmaking.lobby:get_stored_lobby_data()
+    local old_server_name = LobbyAux.get_unique_server_name()
+    local unique_server_name = "[BTMP] " .. old_server_name
+    lobby_data.unique_server_name = unique_server_name
     lobby_data.btmp_max_players = tostring(mod:get("max_players"))
     Managers.matchmaking.lobby:set_lobby_data(lobby_data)
   end
+end
+
+function mod.on_setting_changed()
+  mod.MAX_PLAYERS = mod:get("max_players")
+  script_data.cap_num_bots = math.min(mod:get("num_bots"), mod.MAX_PLAYERS)
+  mod.update_lobby_data()
 end
 
 ModManager.unload_mod = function (self, index)
