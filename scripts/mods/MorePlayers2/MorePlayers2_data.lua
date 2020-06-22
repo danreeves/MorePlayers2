@@ -72,6 +72,12 @@ return {
         default_value = 0,
         range = { 0, 8 },
       },
+      {
+        setting_id = "max_players",
+        type = "numeric",
+        default_value = 32,
+        range = { 0, 32 },
+      },
     },
   },
 }

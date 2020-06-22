@@ -41,4 +41,13 @@ return {
   show_bombs = {
     en = "Show bombs",
   },
+  num_bots = {
+    en = "Number of bots",
+  },
+  num_bots_description = {
+    en = "WARNING: Bots have a serious performance impact above normal amounts"
+  },
+  max_players = {
+    en = "Max players",
+  },
 }

@@ -9,24 +9,23 @@ PlayerManager.MAX_PLAYERS = mod.MAX_PLAYERS
 MatchmakingSettings.MAX_NUMBER_OF_PLAYERS = mod.MAX_PLAYERS
 GameSettingsDevelopment.lobby_max_members = mod.MAX_PLAYERS
 
-local network_options = {
-  config_file_name = "content/MorePlayers2/global", -- MODIFIED
-  ip_address = Network.default_network_address(),
-  lobby_port = GameSettingsDevelopment.network_port,
-  map = "None",
-  max_members = mod.MAX_PLAYERS,
-  project_hash = "bulldozer",
-  query_port = script_data.query_port or script_data.settings.query_port,
-  server_port = script_data.server_port or script_data.settings.server_port,
-  steam_port = script_data.steam_port or script_data.settings.steam_port,
-}
+local function get_network_options()
+  local network_options = {
+    config_file_name = "content/MorePlayers2/global", -- MODIFIED
+    ip_address = Network.default_network_address(),
+    lobby_port = GameSettingsDevelopment.network_port,
+    map = "None",
+    max_members = mod.MAX_PLAYERS,
+    project_hash = "bulldozer",
+    query_port = script_data.query_port or script_data.settings.query_port,
+    server_port = script_data.server_port or script_data.settings.server_port,
+    steam_port = script_data.steam_port or script_data.settings.steam_port,
+  }
+  return network_options
+end
 
-local logged = false
 mod:hook_origin(LobbyManager, "setup_network_options", function(self, increment_lobby_port)
-  if not logged then
-    mod:echo(mod.MOD_NAME .. " | v" .. mod.VERSION)
-    logged = true
-  end
+  local network_options = get_network_options()
   local lobby_port = script_data.server_port or script_data.settings.server_port or network_options.lobby_port
   lobby_port = lobby_port + self._lobby_port_increment
   if increment_lobby_port then self._lobby_port_increment = self._lobby_port_increment + 1 end
