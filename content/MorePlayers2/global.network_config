@@ -309,7 +309,7 @@ messages={
   rpc_loading_synced={}
   rpc_reload_level={args=["level_seed" "locked_directors_functions_array"]
   }
-  rpc_load_level={args=["lookup" "level_seed" "difficulty_lookup" "locked_directors_functions_array"]
+  rpc_load_level={args=["lookup" "level_seed" "difficulty_lookup" "locked_directors_functions_array" "uint_8"]
   }
   rpc_game_started={args=["string"]
     session_bound=true}
