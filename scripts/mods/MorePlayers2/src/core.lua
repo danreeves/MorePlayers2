@@ -18,7 +18,7 @@ local function get_network_options()
     max_members = mod.MAX_PLAYERS,
     project_hash = "bulldozer",
     query_port = script_data.query_port or script_data.settings.query_port,
-    server_port = script_data.server_port or script_data.settings.server_port,
+    server_port = script_data.server_port or script_data.settings.server_port or 27015,
     steam_port = script_data.steam_port or script_data.settings.steam_port,
   }
   return network_options

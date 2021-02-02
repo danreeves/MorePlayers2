@@ -10,5 +10,6 @@ return {
 	end,
 	packages = {
 		"resource_packages/MorePlayers2/MorePlayers2",
+		"resource_packages/MorePlayers2/MorePlayersNetworkConfig"
 	},
 }
