@@ -125,7 +125,7 @@ types = {
 	number = { type = "int", min = -100, max = 155 }
 	objective_socket_id = { type = "int", min = 1, max = 16 }
 	packed_breed_go_ids = { type = "array", max_size = 128, element = "game_object_id" }
-	party_array = { type = "array", max_size = 8, element = "small_lookup" }
+	party_array = { type = "array", max_size = 32, element = "small_lookup" } // MODIFIED
 	party_id = { type = "int", min = 0, max = 15 }
 	party_slot_id = { type = "int", min = 0, max = 63 }
 	payload_speed = { type = "float", min = -10, max = 10, bits = 20, tolerance = 0.01 }
@@ -136,7 +136,7 @@ types = {
 	peer_id_table = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
 	percent = { type = "int", min = 0, max = 127 }
 	percentage = { type = "float", min = 0, max = 1, bits = 20 }
-	percentage_array = { type = "array", max_size = 8, element = "percentage" }
+	percentage_array = { type = "array", max_size = 32, element = "percentage" } // MODIFIED
 	performance_title_amount_table = { type = "array", max_size = 4, element = "uint_16" }
 	performance_title_table = { type = "array", max_size = 4, element = "lookup" }
 	ping = { type = "int", min = 0, max = 1023 }
