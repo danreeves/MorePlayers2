@@ -36,14 +36,9 @@ end)
 mod:hook_origin(GameMechanismManager, "max_members", function() return mod.MAX_PLAYERS end)
 mod:hook_origin(AdventureMechanism, "profile_available", function() return true end)
 mod:hook_origin(AdventureMechanism, "profile_available_for_peer", function() return true end)
-mod:hook_origin(SlotAllocator, "is_free_in_lobby", function() return true end)
-mod:hook_origin(ProfileSynchronizer, "is_only_owner", function() return true end)
-mod:hook_origin(AdventureProfileRules, "_is_only_owner", function() return true end)
-mod:hook_origin(AdventureProfileRules, "_profile_available", function() return true end)
-
-mod:hook(SlotAllocator, "init", function(func, self, is_server, lobby)
-  return func(self, is_server, lobby, mod.MAX_PLAYERS)
-end)
+mod:hook_origin(ProfileSynchronizer, "is_profile_in_use", function() return false end)
+mod:hook_origin(ProfileSynchronizer, "is_free_in_lobby", function() return true end)
+mod:hook_origin(ProfileSynchronizer, "try_reserve_profile_for_peer", function() return true end)
 
 mod:hook(PartyManager, 'get_party',  function(func, self, num)
   local p = self._parties[num]

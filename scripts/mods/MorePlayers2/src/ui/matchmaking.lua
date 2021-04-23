@@ -14,7 +14,6 @@ end
 
 mod:hook(MatchmakingUI, "large_window_set_player_portrait", matchmakinguihooks)
 mod:hook(MatchmakingUI, "large_window_set_player_connecting", matchmakinguihooks)
-mod:hook(MatchmakingUI, "large_window_set_player_ready_state", matchmakinguihooks)
 mod:hook(MatchmakingUI, "_set_player_is_voting", matchmakinguihooks)
 mod:hook(MatchmakingUI, "_set_player_voted_yes", matchmakinguihooks)
 

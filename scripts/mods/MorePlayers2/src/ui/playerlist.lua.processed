@@ -179,6 +179,7 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
           for index = 1, 3, 1 do
             local slot = "item_slot_" .. index
             local icon = equipment_widget_content[slot]
+            mod:echo(icon)
             local icon_color = WHITE
             if icon and icon ~= "icons_placeholder" then
 
@@ -190,27 +191,25 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
               if show_heals or show_books or show_pots or show_bombs then
 
                 icon_position = icon_position + Vector3(icon_size[1], 0, 0)
-
                 local better_icon_table = {
                   heal_01 = "hud_icon_heal_01",
                   heal_02 = "hud_icon_heal_02",
                   speed = "hud_icon_potion_speed",
                   strength = "hud_icon_potion_strength",
                   cooldown = "hud_icon_potion_cooldown_reduction",
-                  ["bomb$"] = "hud_icon_bomb_01",
                   bomb_2 = "hud_icon_bomb_02",
+                  "bomb$" = "hud_icon_bomb_01",
                   tome = "hud_icon_tome",
                   grim = "hud_icon_grimoire",
-                  LiquidBravado = "hud_inventory_icon_deuspotion_LiquidBravado_02",
-                  VampiricDraught = "hud_inventory_icon_deuspotion_VampiricDraught_02",
-                  MootMilk = "hud_inventory_icon_deuspotion_MootMilk_02",
-                  FriendlyMurderer = "hud_inventory_icon_deuspotion_FriendlyMurderer_02",
-                  KillerInTheShadows = "hud_inventory_icon_deuspotion_KillerInTheShadows_02",
-                  PocketsFullOfBombs = "hud_inventory_icon_deuspotion_PocketsFullOfBombs_02",
-                  HoldMyBeer = "hud_inventory_icon_deuspotion_HoldMyBeer_02",
+                  hud_inventory_icon_deuspotion_LiquidBravado = "hud_inventory_icon_deuspotion_LiquidBravado_02",
+                  hud_inventory_icon_deuspotion_VampiricDraught = "hud_inventory_icon_deuspotion_VampiricDraught_02",
+                  hud_inventory_icon_deuspotion_MootMilk = "hud_inventory_icon_deuspotion_MootMilk_02",
+                  hud_inventory_icon_deuspotion_FriendlyMurderer = "hud_inventory_icon_deuspotion_FriendlyMurderer_02",
+                  hud_inventory_icon_deuspotion_KillerInTheShadows = "hud_inventory_icon_deuspotion_KillerInTheShadows_02",
+                  hud_inventory_icon_deuspotion_PocketsFullOfBombs = "hud_inventory_icon_deuspotion_PocketsFullOfBombs_02",
+                  hud_inventory_icon_deuspotion_HoldMyBeer = "hud_inventory_icon_deuspotion_HoldMyBeer_02",
                   hud_inventory_icon_deuspotion_PoisonProof = "hud_inventory_icon_deuspotion_PoisonProof_02"
                 }
-
                 local color_table = {
                   speed = {255, 0, 200, 255},
                   strength = {255, 255, 200, 0},
@@ -219,35 +218,30 @@ mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
                   bomb = {255, 255, 255, 255},
                   tome = {255, 200, 0, 0},
                   grim = {255, 200, 0, 0},
-                  deuspotion = {255, 200, 0, 0},
                 }
-
                 for test, icn in pairs(better_icon_table) do
                   if string.find(icon, test) then
                     icon = icn
                     break
                   end
                 end
-
                 for test, col in pairs(color_table) do
                   if string.find(icon, test) then
                     icon_color = col
                     break
                   end
                 end
-
                 if icon == "hud_icon_bomb_02" then
                   local x_offset = icon_size[1] * 0.15
                   local y_offset = icon_size[2] * 0.15
-                  local shadow_icon_size = { icon_size[1] + x_offset, icon_size[2] + y_offset }
-                  local shadow_icon_position = icon_position - Vector3(x_offset / 2, y_offset / 2, 0)
-                  UIRenderer.draw_texture(ui_renderer, icon .. "_glow", shadow_icon_position, shadow_icon_size, BLACK)
+                  local icon_size = { icon_size[1] + x_offset, icon_size[2] + y_offset }
+                  local icon_position = icon_position - Vector3(x_offset / 2, y_offset / 2, 0)
+                  UIRenderer.draw_texture(ui_renderer, icon .. "_glow", icon_position, icon_size, BLACK)
                 else
                   UIRenderer.draw_texture(ui_renderer, icon .. "_glow", icon_position, icon_size, BLACK)
                 end
                 UIRenderer.draw_texture(ui_renderer, icon, icon_position, icon_size, icon_color)
               end
-
             end
           end
         end
