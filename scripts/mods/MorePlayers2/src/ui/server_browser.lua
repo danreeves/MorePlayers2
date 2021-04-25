@@ -1,6 +1,6 @@
 -- luacheck: globals get_mod StartGameWindowLobbyBrowser
 local mod = get_mod("MorePlayers2")
-mod:hook_safe(StartGameWindowLobbyBrowser,"_handle_lobby_data",  function (self, _, lobby_data)
+mod:hook_safe(StartGameWindowLobbyBrowser, "_handle_lobby_data",  function (self, _, lobby_data)
   local num_players = lobby_data.num_players
   local max_players = lobby_data.btmp_max_players or "4"
 
