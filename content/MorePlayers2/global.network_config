@@ -1,6 +1,6 @@
-network_type="client-server"
 reliable_send_buffer_size=98304
 reliable_receive_buffer_size=32768
+game_object_max_update_size=512
 
 types = {
 	action = { type = "int", min = 1, max = 64 }
@@ -307,7 +307,8 @@ objects = {
 			{ name = "spawn_type", type = "lookup" }
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
-			{ name = "server_chest_type", type = "uint_8" } // C648745D is maybe server_chest_type
+			{ name = "server_chest_type", type = "uint_8" }
+			{ name = "EA0F9683", type = "peer_id_table" }
 		]
 	}
 	sync_unit = {
@@ -379,9 +380,9 @@ objects = {
 			{ name = "overcharge_percentage", type = "small_percentage" }
 			{ name = "overcharge_threshold_percentage", type = "small_percentage" }
 			{ name = "overcharge_max_value", type = "max_overcharge" }
-			{ name = "energy_percentage", type = "small_percentage" } // 9FBB2D50 is maybe energy_percentage
+			{ name = "energy_percentage", type = "small_percentage" }
 			{ name = "energy_max_value", type = "max_energy" }
-			{ name = "is_on_depletion_cooldown", type = "bool" } // F0E79152 is maybe is_on_depletion_cooldown
+			{ name = "is_on_depletion_cooldown", type = "bool" }
 			{ name = "linked_movement", type = "bool" }
 			{ name = "link_parent_id", type = "level_unit_index" }
 			{ name = "link_parent_is_level_unit", type = "bool" }
@@ -879,9 +880,9 @@ objects = {
 			{ name = "overcharge_percentage", type = "small_percentage" }
 			{ name = "overcharge_threshold_percentage", type = "small_percentage" }
 			{ name = "overcharge_max_value", type = "max_overcharge" }
-			{ name = "energy_percentage", type = "small_percentage" } // 9FBB2D50 is maybe energy_percentage
+			{ name = "energy_percentage", type = "small_percentage" }
 			{ name = "energy_max_value", type = "max_energy" }
-			{ name = "is_on_depletion_cooldown", type = "bool" } // F0E79152 is maybe is_on_depletion_cooldown
+			{ name = "is_on_depletion_cooldown", type = "bool" }
 			{ name = "linked_movement", type = "bool" }
 			{ name = "link_parent_id", type = "level_unit_index" }
 			{ name = "link_parent_is_level_unit", type = "bool" }
@@ -999,7 +1000,7 @@ objects = {
 			{ name = "combat_intensity", type = "music_group_states" }
 			{ name = "game_state", type = "C87C807B" }
 			{ name = "boss_state", type = "music_group_states" }
-			{ name = "override", type = "music_group_states" } // Maybe A497D8D5 is override
+			{ name = "override", type = "music_group_states" }
 		]
 	}
 	damage_blob_unit = {
@@ -1534,7 +1535,8 @@ objects = {
 			{ name = "spawn_type", type = "lookup" }
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
-			{ name = "deus_cursed_chest_state", type = "uint_8" } // A69A1B4E is maybe deus_cursed_chest_state
+			{ name = "deus_cursed_chest_state", type = "uint_8" }
+			{ name = "EA0F9683", type = "peer_id_table" }
 		]
 	}
 	pickup_torch_unit_init = {
@@ -3505,6 +3507,12 @@ messages = {
 			"bool"
 		]
 	}
+	rpc_level_load_started = {
+		session_bound = false
+		args = [
+			"int_32"
+		]
+	}
 	rpc_change_game_mode_state = {
 		session_bound = true
 		args = [
@@ -3616,6 +3624,12 @@ messages = {
 		args = [
 			"clock_time"
 			"clock_time"
+		]
+	}
+	rpc_deus_chest_looted = {
+		session_bound = false
+		args = [
+			"game_object_id"
 		]
 	}
 	rpc_notify_lobby_joined = {
@@ -4585,11 +4599,6 @@ messages = {
 			"mutator_lookup"
 		]
 	}
-	rpc_reload_level = {
-		session_bound = false
-		args = [
-		]
-	}
 	rpc_set_quick_game = {
 		session_bound = true
 		args = [
@@ -5046,11 +5055,6 @@ messages = {
 		args = [
 			"lobby_type"
 			"lobby_to_join"
-		]
-	}
-	rpc_load_level = {
-		session_bound = false
-		args = [
 		]
 	}
 	rpc_from_server_load_breeds_by_bitmask = {
