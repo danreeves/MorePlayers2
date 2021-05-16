@@ -308,7 +308,7 @@ objects = {
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
 			{ name = "server_chest_type", type = "uint_8" }
-			{ name = "EA0F9683", type = "peer_id_table" }
+			{ name = "collected_by_peers", type = "peer_id_table" } // EA0F9683 is collected_by_peers
 		]
 	}
 	sync_unit = {
@@ -1536,7 +1536,7 @@ objects = {
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
 			{ name = "deus_cursed_chest_state", type = "uint_8" }
-			{ name = "EA0F9683", type = "peer_id_table" }
+			{ name = "collected_by_peers", type = "peer_id_table" } // EA0F9683 is collected_by_peers
 		]
 	}
 	pickup_torch_unit_init = {
@@ -1787,7 +1787,7 @@ objects = {
 			{ name = "network_buff_ids", type = "buff_array" }
 			{ name = "health", type = "health" }
 			{ name = "max_spawn_amount", type = "uint_16" }
-			{ name = "F0B16CC7", type = "breed_array_lookup" }
+			{ name = "spawnable_breeds", type = "breed_array_lookup" } // F0B16CC7 is spawnable_breeds
 			{ name = "spawn_rate", type = "spawn_rate" }
 		]
 	}
