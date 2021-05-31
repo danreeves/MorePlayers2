@@ -1,4 +1,4 @@
--- luacheck: globals get_mod ChallengeTrackerUI
+-- luacheck: globals get_mod ChallengeTrackerUI table.contains
 local mod = get_mod("MorePlayers2")
 
 -- copied from definitions file

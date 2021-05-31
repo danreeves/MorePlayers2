@@ -1,4 +1,4 @@
--- luacheck: globals get_mod TwitchVoteUI
+-- luacheck: globals get_mod TwitchVoteUI table.shuffle table.slice
 local mod = get_mod("MorePlayers2")
 
 -- TODO: THIS IS BUGGY
