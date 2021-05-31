@@ -33,6 +33,9 @@ mod:dofile("scripts/mods/MorePlayers2/src/ui/twitch")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/challenges")
 mod:dofile("scripts/mods/MorePlayers2/src/ui/server_browser")
 
+-- QOL
+mod:dofile("scripts/mods/MorePlayers2/src/qol/unlock_cata")
+
 function mod.update_lobby_data()
   if Managers.player.is_server then
     Managers.lobby:setup_network_options()
