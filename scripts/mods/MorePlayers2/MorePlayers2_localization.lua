@@ -5,6 +5,9 @@ return {
   show_player_list = {
     en = "Show player list",
   },
+  use_default_player_list = {
+    en = "Use default UI",
+  },
   show_player_list_description = {
     en = "Show the list of players in game. The portraits are always disabled."
   },

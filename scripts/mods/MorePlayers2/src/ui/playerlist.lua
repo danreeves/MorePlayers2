@@ -16,9 +16,13 @@ mod:hook(UnitFramesHandler, "_create_unit_frame_by_type", function (func, self, 
   return unit_frame
 end)
 
-mod:hook_origin(UnitFramesHandler, "_draw", function(self, dt)
+mod:hook(UnitFramesHandler, "_draw", function(func, self, dt)
   if not mod:get("show_player_list") then
     return
+  end
+
+  if mod:get("use_default_player_list") then
+    return func(self, dt)
   end
 
   if not self._is_visible then

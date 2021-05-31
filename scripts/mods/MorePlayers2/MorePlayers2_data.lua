@@ -19,6 +19,13 @@ return {
         setting_id = "show_player_list",
         type = "checkbox",
         default_value = true,
+        sub_widgets = {
+          {
+            setting_id = "use_default_player_list",
+            type = "checkbox",
+            default_value = false,
+          }
+        },
       },
       {
         setting_id    = "font",
