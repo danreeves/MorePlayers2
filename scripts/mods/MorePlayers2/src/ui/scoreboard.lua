@@ -12,23 +12,32 @@ mod:hook(EndViewStateScore, "_set_topic_data", function (func, self, player_data
 end)
 
 mod:hook(EndViewStateScore, "_setup_player_scores", function (func, self, players_session_scores)
-  -- Limit it to the first four players
-  -- TODO: Use table.slice?
   local scores = {}
-  for i = 1, 4, 1 do
-    scores[i] = players_session_scores[i]
-  end
-  return func(self, scores)
-end)
 
-mod:hook(EndViewStateScore, "_setup_score_panel", function (func, self, score_panel_scores, player_names)
-  -- Limit it to the first four players
-  -- TODO: Use table.slice?
-  local scores = {}
-  local names = {}
-  for i = 1, 4, 1 do
-    scores[i] = score_panel_scores[i]
-    names[i] = player_names[i]
+  local stat_names = {"kills_total", "damage_dealt", "damage_taken", "revives"}
+
+  for _, stat_name in pairs(stat_names) do
+    local highest_value = -1e309
+    local highest_player = nil
+    local highest_player_key = nil
+
+    for key, data in pairs(players_session_scores) do
+      local stat = nil
+      for _, s in pairs(data.group_scores.offense) do
+        if s.stat_name == stat_name then
+          stat =  s
+        end
+      end
+      local current_value = stat.score
+      if current_value > highest_value then
+        highest_value = current_value
+        highest_player = data
+        highest_player_key = key
+      end
+    end
+
+    scores[highest_player_key .. stat_name] = highest_player
   end
-  return func(self, scores, names)
+
+  return func(self, scores)
 end)
