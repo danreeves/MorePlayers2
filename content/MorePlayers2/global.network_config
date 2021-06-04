@@ -26,7 +26,7 @@ types = {
 	buff_array = { type = "array", max_size = 16, element = "buff_lookup" }
 	buff_instances = { type = "int", min = 1, max = 16 }
 	buff_lookup = { type = "int", min = 1, max = 2048 }
-	buff_proc_attack_types = { type = "int", min = 1, max = 8 }
+	buff_proc_attack_types = { type = "int", min = 1, max = 16 }
 	buff_value = { type = "float", min = 0, max = 1, tolerance = 0.05 }
 	buff_variable_data_array = { type = "array", max_size = 32, element = "buff_value" }
 	buff_variable_type_array = { type = "array", max_size = 32, element = "lookup" }
@@ -308,7 +308,7 @@ objects = {
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
 			{ name = "server_chest_type", type = "uint_8" }
-			{ name = "collected_by_peers", type = "peer_id_table" } // EA0F9683 is collected_by_peers
+			{ name = "collected_by_peers", type = "peer_id_table" }
 		]
 	}
 	sync_unit = {
@@ -576,6 +576,7 @@ objects = {
 			{ name = "invisible_unit", type = "bool" }
 			{ name = "explosion_template_name", type = "lookup" }
 			{ name = "owner_player_id", type = "game_object_id" }
+			{ name = "health", type = "health" }
 		]
 	}
 	liquid_aoe_unit = {
@@ -922,6 +923,7 @@ objects = {
 			{ name = "rotation", type = "rotation" }
 			{ name = "health", type = "health" }
 			{ name = "standard_template_id", type = "standard_template_id" }
+			{ name = "513D3B29", type = "bool" }
 		]
 	}
 	limited_owned_pickup_projectile_unit = {
@@ -1536,7 +1538,7 @@ objects = {
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
 			{ name = "deus_cursed_chest_state", type = "uint_8" }
-			{ name = "collected_by_peers", type = "peer_id_table" } // EA0F9683 is collected_by_peers
+			{ name = "collected_by_peers", type = "peer_id_table" }
 		]
 	}
 	pickup_torch_unit_init = {
@@ -1787,7 +1789,7 @@ objects = {
 			{ name = "network_buff_ids", type = "buff_array" }
 			{ name = "health", type = "health" }
 			{ name = "max_spawn_amount", type = "uint_16" }
-			{ name = "spawnable_breeds", type = "breed_array_lookup" } // F0B16CC7 is spawnable_breeds
+			{ name = "spawnable_breeds", type = "breed_array_lookup" }
 			{ name = "spawn_rate", type = "spawn_rate" }
 		]
 	}
@@ -2886,6 +2888,13 @@ messages = {
 			"position"
 			"int_1_4"
 			"bool"
+		]
+	}
+	rpc_summon_vortex = {
+		session_bound = true
+		args = [
+			"game_object_id"
+			"game_object_id"
 		]
 	}
 	rpc_update_current_wind = {
@@ -4696,6 +4705,15 @@ messages = {
 			"enemy_yaw_rotation"
 		]
 	}
+	rpc_set_migration_host_xbox = {
+		session_bound = false
+		args = [
+			"peer_id"
+			"bool"
+			"string"
+			"string"
+		]
+	}
 	rpc_matchmaking_request_profiles_data = {
 		session_bound = false
 		args = [
@@ -4919,6 +4937,7 @@ messages = {
 			"position"
 			"rotation"
 			"game_object_id"
+			"uint_8"
 			"uint_8"
 		]
 	}
@@ -5412,6 +5431,7 @@ messages = {
 			"bool"
 			"bool"
 			"uint_8"
+			"buff_proc_attack_types"
 			"backstab_multiplier"
 		]
 	}
