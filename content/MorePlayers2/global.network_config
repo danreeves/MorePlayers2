@@ -923,7 +923,7 @@ objects = {
 			{ name = "rotation", type = "rotation" }
 			{ name = "health", type = "health" }
 			{ name = "standard_template_id", type = "standard_template_id" }
-			{ name = "513D3B29", type = "bool" }
+			{ name = "always_pingable", type = "bool" }
 		]
 	}
 	limited_owned_pickup_projectile_unit = {
