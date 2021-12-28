@@ -15,8 +15,6 @@ types = {
 	animation_variable_float = { type = "float", min = -12, max = 12 }
 	aoe_push_mass = { type = "int", min = 0, max = 15 }
 	attack_arm = { type = "int", min = 1, max = 2 }
-	EC9DA88C = { type = "int", min = 1, max = 4 }
-	DB0F665E = { type = "int", min = 1, max = 32 }
 	backend_session_id = { type = "int", min = 0, max = 4294967295 }
 	backstab_multiplier = { type = "float", min = 1, max = 2.5, bits = 2 }
 	bool = { type = "bool" }
@@ -29,8 +27,6 @@ types = {
 	buff_instances = { type = "int", min = 1, max = 16 }
 	buff_lookup = { type = "int", min = 1, max = 2048 }
 	buff_proc_attack_types = { type = "int", min = 1, max = 16 }
-	C17681CE = { type = "array", max_size = 11, element = "small_lookup" }
-	DB10249A = { type = "array", max_size = 11, element = "game_object_id" }
 	buff_value = { type = "float", min = 0, max = 1, tolerance = 0.05 }
 	buff_variable_data_array = { type = "array", max_size = 32, element = "buff_value" }
 	buff_variable_type_array = { type = "array", max_size = 32, element = "lookup" }
@@ -132,7 +128,7 @@ types = {
 	objective_socket_id = { type = "int", min = 1, max = 16 }
 	packed_breed_go_ids = { type = "array", max_size = 128, element = "game_object_id" }
 	party_array = { type = "array", max_size = 32, element = "small_lookup" } // MODIFIED
-	party_id = { type = "int", min = 0, max = 32 } // MODIFIED
+	party_id = { type = "int", min = 0, max = 15 }
 	party_slot_id = { type = "int", min = 0, max = 63 }
 	payload_speed = { type = "float", min = -10, max = 10, bits = 20, tolerance = 0.01 }
 	payload_spline_index = { type = "int", min = 1, max = 256 }
@@ -157,15 +153,13 @@ types = {
 	position_array = { type = "array", max_size = 15, element = "position" }
 	position_single = { type = "float", min = -655.35, max = 655.36, bits = 17, tolerance = 0.01 }
 	power_level = { type = "int", min = 0, max = 2047 }
-	proc_function_lookup = { type = "int", min = 1, max = 512 }
+	proc_function_lookup = { type = "int", min = 1, max = 256 }
 	profile_array = { type = "array", max_size = 32, element = "peer_id" }
 	profile_index = { type = "int", min = 0, max = 31 }
 	progress = { type = "float", min = 0, max = 1 }
 	projectile_angle = { type = "int", min = -512, max = 1535 }
 	projectile_speed = { type = "int", min = 0, max = 65535 }
 	projectile_state = { type = "int", min = 0, max = 3 }
-	30585515 = { type = "array", max_size = 32, element = "lookup" }
-	9891894C = { type = "array", max_size = 32, element = "buff_value" }
 	radius = { type = "int", min = 0, max = 63 }
 	ragdoll_actor = { type = "int", min = 1, max = 32 }
 	range = { type = "int", min = 0, max = 127 }
@@ -194,7 +188,7 @@ types = {
 	stagger_type = { type = "int", min = 0, max = 15 }
 	standard_template_id = { type = "int", min = 1, max = 4 }
 	statistics_path = { type = "array", max_size = 5, element = "statistics_path_lookup" }
-	statistics_path_lookup = { type = "int", min = 1, max = 1024 }
+	statistics_path_lookup = { type = "int", min = 1, max = 256 }
 	story_time = { type = "float", min = -3600, max = 3600, bits = 20 }
 	string = { type = "string" }
 	string_array = { type = "array", max_size = 3, element = "string" }
@@ -217,7 +211,6 @@ types = {
 	terror_flow_event = { type = "int", min = 1, max = 512 }
 	time = { type = "int", min = -1, max = 65534 }
 	time_multiplier = { type = "float", min = 0.01, max = 2 }
-	EF9DD2D8 = { type = "array", max_size = 32, element = "lookup" }
 	twitch_lookup = { type = "int", min = 0, max = 1023 }
 	twitch_options = { type = "array", max_size = 5, element = "uint_16" }
 	twitch_template_lookup = { type = "array", max_size = 5, element = "twitch_lookup" }
@@ -249,7 +242,7 @@ types = {
 	weave_score = { type = "int", min = 0, max = 32767 }
 	weight = { type = "float", min = -1, max = 16, bits = 6 }
 	weight_array = { type = "array", max_size = 1024, element = "weight" }
-	wounds = { type = "int", min = -1, max = 30 }
+	wounds = { type = "int", min = -1, max = 6 }
 }
 
 objects = {
@@ -398,18 +391,6 @@ objects = {
 			{ name = "moving_platform", type = "level_unit_index" }
 			{ name = "has_moved_from_start_position", type = "bool" }
 			{ name = "network_buff_ids", type = "buff_array" }
-		]
-	}
-	geheimnisnacht_2021_altar = {
-		priority = 2
-		update_rate = 10
-		fields = [
-			{ name = "go_type", type = "game_object_type" }
-			{ name = "husk_unit", type = "husk_unit" }
-			{ name = "position", type = "position" }
-			{ name = "rotation", type = "rotation" }
-			{ name = "health", type = "health" }
-			{ name = "state", type = "uint_8" }
 		]
 	}
 	ai_player = {
@@ -750,15 +731,6 @@ objects = {
 			{ name = "has_physics", type = "bool" }
 			{ name = "spawn_type", type = "lookup" }
 			{ name = "damage", type = "damage" }
-		]
-	}
-	keep_decoration_trophy = {
-		priority = 1
-		update_rate = 1
-		fields = [
-			{ name = "go_type", type = "game_object_type" }
-			{ name = "level_unit_index", type = "level_unit_index" }
-			{ name = "70F2CCDB", type = "lookup" }
 		]
 	}
 	versus_character_selection_unit = {
@@ -1181,16 +1153,6 @@ objects = {
 			{ name = "slow_modifier", type = "number" }
 		]
 	}
-	positioned_blob_unit = {
-		priority = 1
-		update_rate = 1
-		fields = [
-			{ name = "go_type", type = "game_object_type" }
-			{ name = "husk_unit", type = "husk_unit" }
-			{ name = "position", type = "position" }
-			{ name = "rotation", type = "rotation" }
-		]
-	}
 	ai_unit_beastmen_minotaur = {
 		priority = 1
 		update_rate = 1
@@ -1313,15 +1275,6 @@ objects = {
 			{ name = "source_unit", type = "game_object_id" }
 			{ name = "rotation", type = "enemy_rotation" }
 			{ name = "height_percentage", type = "percentage" }
-		]
-	}
-	priest_career_data = {
-		priority = 2
-		update_rate = 1
-		fields = [
-			{ name = "go_type", type = "game_object_type" }
-			{ name = "unit_game_object_id", type = "game_object_id" }
-			{ name = "fury_active", type = "bool" }
 		]
 	}
 	player = {
@@ -1751,7 +1704,6 @@ objects = {
 			{ name = "slot_melee_skin", type = "lookup" }
 			{ name = "slot_ranged", type = "weapon_id" }
 			{ name = "slot_ranged_skin", type = "lookup" }
-			{ name = "playerlist_build_privacy", type = "lookup" }
 		]
 	}
 	weave_interaction_unit = {
@@ -2442,15 +2394,6 @@ messages = {
 		args = [
 		]
 	}
-	rpc_add_buff_synced = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"lookup"
-			"server_controlled_buff_id"
-			"int_1_4"
-		]
-	}
 	rpc_sync_performance_titles = {
 		session_bound = true
 		args = [
@@ -3012,15 +2955,6 @@ messages = {
 			"lookup"
 		]
 	}
-	rpc_add_buff_synced_relay = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"lookup"
-			"server_controlled_buff_id"
-			"int_1_4"
-		]
-	}
 	rpc_set_player_state = {
 		session_bound = true
 		args = [
@@ -3142,15 +3076,6 @@ messages = {
 	rpc_request_painting = {
 		session_bound = false
 		args = [
-		]
-	}
-	rpc_set_attribute_bool = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"DB0F665E"
-			"EC9DA88C"
-			"bool"
 		]
 	}
 	rpc_enable_animation_movement_system = {
@@ -3683,13 +3608,6 @@ messages = {
 			"game_object_id"
 		]
 	}
-	rpc_remove_buff_synced = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"server_controlled_buff_id"
-		]
-	}
 	rpc_give_ammo_fraction_to_owner = {
 		session_bound = false
 		args = [
@@ -3710,6 +3628,14 @@ messages = {
 		args = [
 			"game_object_id"
 			"bool"
+		]
+	}
+	rpc_deus_set_initial_talents = {
+		session_bound = false
+		args = [
+			"profile_index"
+			"career_id"
+			"9B9DDAF1"
 		]
 	}
 	rpc_network_time_sync_response = {
@@ -3979,17 +3905,6 @@ messages = {
 			"104249E3"
 		]
 	}
-	rpc_add_buff_synced_relay_params = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"lookup"
-			"server_controlled_buff_id"
-			"int_1_4"
-			"C17681CE"
-			"DB10249A"
-		]
-	}
 	rpc_set_game_mode_event_data = {
 		session_bound = true
 		args = [
@@ -4081,17 +3996,6 @@ messages = {
 		session_bound = true
 		args = [
 			"clock_time"
-		]
-	}
-	rpc_add_buff_synced_params = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"lookup"
-			"server_controlled_buff_id"
-			"int_1_4"
-			"C17681CE"
-			"DB10249A"
 		]
 	}
 	rpc_requirement_failed = {
@@ -4638,13 +4542,6 @@ messages = {
 			"uint_8"
 		]
 	}
-	rpc_sync_current_max_health = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"uint_32"
-		]
-	}
 	rpc_request_leave_ghost_mode = {
 		session_bound = true
 		args = [
@@ -4719,7 +4616,6 @@ messages = {
 		session_bound = true
 		args = [
 			"mutator_lookup"
-			"bool"
 		]
 	}
 	rpc_set_quick_game = {
@@ -4825,12 +4721,6 @@ messages = {
 			"peer_id"
 			"bool"
 			"string"
-			"string"
-		]
-	}
-	rpc_trigger_level_event = {
-		session_bound = true
-		args = [
 			"string"
 		]
 	}
@@ -4986,8 +4876,8 @@ messages = {
 	rpc_deus_setup_run = {
 		session_bound = false
 		args = [
-			"run_id" // MODIFIED 6B47E54D is run_id?
-			"run_seed" // MODIFIED 32F03ED4 is run_seed?
+			"run_id" // 6B47E54D is run_id?
+			"run_seed" // 32F03ED4 is run_seed?
 			"difficulty_lookup"
 			"lookup"
 			"lookup"
@@ -5203,20 +5093,6 @@ messages = {
 			"enemy_package_loader_bitmask_array"
 		]
 	}
-	rpc_sync_loadout_slot = {
-		session_bound = true
-		args = [
-			"peer_id"
-			"local_player_id"
-			"slot_id"
-			"lookup"
-			"lookup"
-			"power_level"
-			"30585515"
-			"9891894C"
-			"EF9DD2D8"
-		]
-	}
 	rpc_server_audio_unit_param_float_event = {
 		session_bound = true
 		args = [
@@ -5374,13 +5250,6 @@ messages = {
 			"game_object_id"
 		]
 	}
-	rpc_request_convert_temp = {
-		session_bound = false
-		args = [
-			"game_object_id"
-			"damage"
-		]
-	}
 	rpc_flow_state_bool_changed = {
 		session_bound = true
 		args = [
@@ -5489,14 +5358,6 @@ messages = {
 		args = [
 		]
 	}
-	rpc_add_buff_synced_response = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"server_controlled_buff_id"
-			"server_controlled_buff_id"
-		]
-	}
 	rpc_enable_linked_movement = {
 		session_bound = true
 		args = [
@@ -5587,15 +5448,6 @@ messages = {
 	rpc_deed_consumed = {
 		session_bound = true
 		args = [
-		]
-	}
-	rpc_set_attribute_int = {
-		session_bound = true
-		args = [
-			"game_object_id"
-			"DB0F665E"
-			"EC9DA88C"
-			"uint_16"
 		]
 	}
 	rpc_sync_anim_state_4 = {

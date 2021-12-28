@@ -6,10 +6,16 @@ return {
   description = mod:localize("mod_description"),
   is_togglable = false,
   custom_gui_textures = {
+    atlases = {
+      {
+        "atlases/mods/MorePlayers2/store_copy",
+        "moreplayers2_store_copy",
+      },
+    },
     ui_renderer_injections = {
       {
         "ingame_ui",
-        "materials/ui/ui_1080p_store_menu",
+        "materials/mods/MorePlayers2/store_copy",
       },
     },
   },

@@ -8,4 +8,9 @@ package = [
 
 lua = [
 	"scripts/mods/MorePlayers2/*"
+	"atlases/mods/MorePlayers2/*"
+]
+
+material = [
+	"materials/mods/MorePlayers2/*"
 ]

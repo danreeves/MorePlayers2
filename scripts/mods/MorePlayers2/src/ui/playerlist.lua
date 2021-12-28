@@ -153,7 +153,13 @@ mod:hook(UnitFramesHandler, "_draw", function(func, self, dt)
 
         -- Career icon
         if career_name then
-          local icon = "store_tag_icon_" .. career_name
+          local icon_name = career_name
+
+          if icon_name == "wh_priest" then
+            icon_name = "wh_warriorpriest"
+          end
+
+          local icon = "moreplayers2_store_tag_icon_" .. icon_name
           local icon_position = pos - Vector3(font_size + left_padding * 0.3, font_size / 3, 0)
           UIRenderer.draw_texture(ui_renderer, icon, icon_position, icon_size, color)
         end

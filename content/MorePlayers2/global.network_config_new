@@ -1,6 +1,5 @@
 reliable_send_buffer_size=98304
 reliable_receive_buffer_size=32768
-game_object_max_update_size=512
 
 types = {
 	action = { type = "int", min = 1, max = 64 }
@@ -48,8 +47,8 @@ types = {
 	damage_source_id = { type = "int", min = 1, max = 16384 }
 	damage_type = { type = "int", min = 1, max = 256 }
 	debug_command_lookup = { type = "int", min = 1, max = 8 }
-	run_id = { type = "string" }
-	run_seed = { type = "string" }
+	6B47E54D = { type = "string" }
+	32F03ED4 = { type = "string" }
 	dialogue_event_data = { type = "array", max_size = 8, element = "lookup" }
 	dialogue_event_data_type = { type = "array", max_size = 8, element = "bool" }
 	dialogue_index = { type = "int", min = 1, max = 32 }
@@ -106,7 +105,7 @@ types = {
 	lobby_id = { type = "int64" }
 	lobby_to_join = { type = "string" }
 	lobby_type = { type = "int", min = 1, max = 2 }
-	local_player_id = { type = "int", min = 0, max = 32 } // MODIFIED
+	local_player_id = { type = "int", min = 0, max = 15 }
 	104249E3 = { type = "int", min = 1, max = 4096 }
 	locked_directors_functions_array = { type = "array", max_size = 10, element = "small_lookup" }
 	lookup = { type = "int", min = 1, max = 4096 }
@@ -131,18 +130,18 @@ types = {
 	number = { type = "int", min = -100, max = 155 }
 	objective_socket_id = { type = "int", min = 1, max = 16 }
 	packed_breed_go_ids = { type = "array", max_size = 128, element = "game_object_id" }
-	party_array = { type = "array", max_size = 32, element = "small_lookup" } // MODIFIED
-	party_id = { type = "int", min = 0, max = 32 } // MODIFIED
+	party_array = { type = "array", max_size = 8, element = "small_lookup" }
+	party_id = { type = "int", min = 0, max = 15 }
 	party_slot_id = { type = "int", min = 0, max = 63 }
 	payload_speed = { type = "float", min = -10, max = 10, bits = 20, tolerance = 0.01 }
 	payload_spline_index = { type = "int", min = 1, max = 256 }
 	payload_spline_subdivisions = { type = "int", min = 1, max = 16 }
 	payload_spline_t = { type = "float", min = 0, max = 1 }
 	peer_id = { type = "int64" }
-	peer_id_table = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
+	peer_id_table = { type = "array", max_size = 8, element = "peer_id" }
 	percent = { type = "int", min = 0, max = 127 }
 	percentage = { type = "float", min = 0, max = 1, bits = 20 }
-	percentage_array = { type = "array", max_size = 32, element = "percentage" } // MODIFIED
+	percentage_array = { type = "array", max_size = 8, element = "percentage" }
 	performance_title_amount_table = { type = "array", max_size = 4, element = "uint_16" }
 	performance_title_table = { type = "array", max_size = 4, element = "lookup" }
 	ping = { type = "int", min = 0, max = 1023 }
@@ -236,14 +235,14 @@ types = {
 	vortex_template_id = { type = "int", min = 1, max = 8 }
 	vote_data_deed = { type = "array", max_size = 12, element = "weapon_id" }
 	vote_data_lookup = { type = "array", max_size = 12, element = "lookup" }
-	vote_data_peer_id = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
+	vote_data_peer_id = { type = "array", max_size = 4, element = "peer_id" }
 	weapon_id = { type = "int", min = 1, max = 16384 }
 	weave_bar_score = { type = "float", min = 0, max = 100 }
 	weave_buff_lookup_array = { type = "array", max_size = 32, element = "lookup" }
 	weave_buff_value_array = { type = "array", max_size = 32, element = "buff_value" }
 	weave_damage_taken = { type = "float", min = 0, max = 16383, bits = 15 }
 	weave_item_template_names = { type = "int", min = 1, max = 16 }
-	weave_num_players = { type = "int", min = 1, max = 32 } // MODIFIED
+	weave_num_players = { type = "int", min = 1, max = 4 }
 	weave_objective_index = { type = "int", min = 0, max = 7 }
 	weave_objective_names = { type = "int", min = 1, max = 256 }
 	weave_score = { type = "int", min = 0, max = 32767 }
@@ -4986,8 +4985,8 @@ messages = {
 	rpc_deus_setup_run = {
 		session_bound = false
 		args = [
-			"run_id" // MODIFIED 6B47E54D is run_id?
-			"run_seed" // MODIFIED 32F03ED4 is run_seed?
+			"6B47E54D"
+			"32F03ED4"
 			"difficulty_lookup"
 			"lookup"
 			"lookup"

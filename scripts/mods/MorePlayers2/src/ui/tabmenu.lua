@@ -1,13 +1,10 @@
--- luacheck: globals get_mod IngamePlayerListUI
+-- luacheck: globals get_mod IngamePlayerListUI UIWidget local_require
 local mod = get_mod("MorePlayers2")
+local definitions = local_require("scripts/ui/views/ingame_player_list_ui_v2_definitions")
 
--- For now, just disable all other players.
--- This UI is known for being buggy under normal circumstances and
--- it has performance issues when it's not crashing with more than 4
--- players. May or may not improve this.
-mod:hook(IngamePlayerListUI, "add_player", function(func, self, player)
-  if player.local_player then
-    func(self, player)
+-- Just creates widgets, you can't see them
+mod:hook_safe(IngamePlayerListUI, "_create_ui_elements", function(self)
+  for i = 9, 32, 1 do
+    self._player_list_widgets[i] = UIWidget.init(definitions.player_widget_definition(i))
   end
 end)
-
