@@ -48,8 +48,8 @@ types = {
 	damage_source_id = { type = "int", min = 1, max = 16384 }
 	damage_type = { type = "int", min = 1, max = 256 }
 	debug_command_lookup = { type = "int", min = 1, max = 8 }
-	run_id = { type = "string" }
-	run_seed = { type = "string" }
+	run_id = { type = "string" } // MODIFIED 6B47E54D is run_id?
+	run_seed = { type = "string" } // MODIFIED 32F03ED4 is run_seed?
 	dialogue_event_data = { type = "array", max_size = 8, element = "lookup" }
 	dialogue_event_data_type = { type = "array", max_size = 8, element = "bool" }
 	dialogue_index = { type = "int", min = 1, max = 32 }
@@ -193,6 +193,7 @@ types = {
 	stagger_animation_scale = { type = "float", min = 0, max = 10, bits = 16, tolerance = 0.01 }
 	stagger_type = { type = "int", min = 0, max = 15 }
 	standard_template_id = { type = "int", min = 1, max = 4 }
+	9BF1C7B0 = { type = "float", min = 0, max = 255.75, bits = 10 }
 	statistics_path = { type = "array", max_size = 5, element = "statistics_path_lookup" }
 	statistics_path_lookup = { type = "int", min = 1, max = 1024 }
 	story_time = { type = "float", min = -3600, max = 3600, bits = 20 }
@@ -383,6 +384,8 @@ objects = {
 			{ name = "profile_id", type = "slot_id" }
 			{ name = "career_id", type = "career_id" }
 			{ name = "ammo_percentage", type = "small_percentage" }
+			{ name = "current_ammo", type = "uint_8" }
+			{ name = "max_ammo", type = "uint_8" }
 			{ name = "ability_percentage", type = "small_percentage" }
 			{ name = "overcharge_percentage", type = "small_percentage" }
 			{ name = "overcharge_threshold_percentage", type = "small_percentage" }
@@ -596,6 +599,7 @@ objects = {
 			{ name = "explosion_template_name", type = "lookup" }
 			{ name = "owner_player_id", type = "game_object_id" }
 			{ name = "health", type = "health" }
+			{ name = "13903305", type = "small_lookup" }
 		]
 	}
 	liquid_aoe_unit = {
@@ -905,6 +909,8 @@ objects = {
 			{ name = "profile_id", type = "slot_id" }
 			{ name = "career_id", type = "career_id" }
 			{ name = "ammo_percentage", type = "small_percentage" }
+			{ name = "current_ammo", type = "uint_8" }
+			{ name = "max_ammo", type = "uint_8" }
 			{ name = "ability_percentage", type = "small_percentage" }
 			{ name = "overcharge_percentage", type = "small_percentage" }
 			{ name = "overcharge_threshold_percentage", type = "small_percentage" }
@@ -1741,6 +1747,7 @@ objects = {
 			{ name = "go_type", type = "game_object_type" }
 			{ name = "network_id", type = "peer_id" }
 			{ name = "local_player_id", type = "local_player_id" }
+			{ name = "is_dev", type = "bool" }
 			{ name = "power_level", type = "power_level" }
 			{ name = "best_aquired_power_level", type = "power_level" }
 			{ name = "highest_unlocked_difficulty", type = "difficulty_lookup" }
@@ -2682,6 +2689,14 @@ messages = {
 			"int_32"
 		]
 	}
+	rpc_server_request_emote = {
+		session_bound = true
+		args = [
+			"game_object_id"
+			"anim_event"
+			"bool"
+		]
+	}
 	rpc_bot_unit_order = {
 		session_bound = true
 		args = [
@@ -2961,6 +2976,12 @@ messages = {
 		session_bound = true
 		args = [
 			"game_object_id"
+			"game_object_id"
+		]
+	}
+	rpc_server_cancel_emote = {
+		session_bound = true
+		args = [
 			"game_object_id"
 		]
 	}
@@ -3578,6 +3599,7 @@ messages = {
 	rpc_deus_add_power_ups = {
 		session_bound = false
 		args = [
+			"string"
 			"string"
 		]
 	}
@@ -4266,6 +4288,18 @@ messages = {
 			"bool"
 		]
 	}
+	rpc_create_thornsister_push_wave = {
+		session_bound = true
+		args = [
+			"game_object_id"
+			"position"
+			"position"
+			"small_lookup"
+			"power_level"
+			"position_array"
+			"small_lookup"
+		]
+	}
 	rpc_alert_enemy = {
 		session_bound = true
 		args = [
@@ -4642,7 +4676,7 @@ messages = {
 		session_bound = true
 		args = [
 			"game_object_id"
-			"uint_32"
+			"health"
 		]
 	}
 	rpc_request_leave_ghost_mode = {
@@ -4986,8 +5020,8 @@ messages = {
 	rpc_deus_setup_run = {
 		session_bound = false
 		args = [
-			"run_id" // MODIFIED 6B47E54D is run_id?
-			"run_seed" // MODIFIED 32F03ED4 is run_seed?
+			"run_id"
+			"run_seed"
 			"difficulty_lookup"
 			"lookup"
 			"lookup"
@@ -5187,6 +5221,14 @@ messages = {
 		session_bound = true
 		args = [
 			"game_object_id"
+		]
+	}
+	rpc_set_stormfiend_beam = {
+		session_bound = true
+		args = [
+			"game_object_id"
+			"attack_arm"
+			"bool"
 		]
 	}
 	rpc_follow_to_lobby = {
@@ -5475,6 +5517,13 @@ messages = {
 		session_bound = false
 		args = [
 			"string"
+		]
+	}
+	rpc_modify_stat = {
+		session_bound = true
+		args = [
+			"lookup"
+			"9BF1C7B0"
 		]
 	}
 	rpc_from_server_unload_breed_package = {
