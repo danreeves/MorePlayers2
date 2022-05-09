@@ -599,7 +599,7 @@ objects = {
 			{ name = "explosion_template_name", type = "lookup" }
 			{ name = "owner_player_id", type = "game_object_id" }
 			{ name = "health", type = "health" }
-			{ name = "13903305", type = "small_lookup" }
+			{ name = "wall_index", type = "small_lookup" }
 		]
 	}
 	liquid_aoe_unit = {
