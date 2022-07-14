@@ -1,6 +1,5 @@
 reliable_send_buffer_size=98304
 reliable_receive_buffer_size=32768
-game_object_max_update_size=512
 
 types = {
 	action = { type = "int", min = 1, max = 64 }
@@ -48,8 +47,8 @@ types = {
 	damage_source_id = { type = "int", min = 1, max = 16384 }
 	damage_type = { type = "int", min = 1, max = 256 }
 	debug_command_lookup = { type = "int", min = 1, max = 8 }
-	run_id = { type = "string" } // MODIFIED 6B47E54D is run_id?
-	run_seed = { type = "string" } // MODIFIED 32F03ED4 is run_seed?
+	6B47E54D = { type = "string" }
+	32F03ED4 = { type = "string" }
 	dialogue_event_data = { type = "array", max_size = 8, element = "lookup" }
 	dialogue_event_data_type = { type = "array", max_size = 8, element = "bool" }
 	dialogue_index = { type = "int", min = 1, max = 32 }
@@ -70,6 +69,7 @@ types = {
 	fatigue_cost_multiplier = { type = "float", min = 0, max = 4, tolerance = 0.5 }
 	fatigue_points = { type = "int", min = 1, max = 32 }
 	C477B705 = { type = "float", min = 0, max = 7.75, bits = 8 }
+	1E7C6F15 = { type = "float", min = 0, max = 15.75, bits = 6 }
 	flow_states = { type = "int", min = 1, max = 256 }
 	follow_result = { type = "bool" }
 	fuse_time = { type = "float", min = 0, max = 63.75, bits = 8 }
@@ -106,7 +106,7 @@ types = {
 	lobby_id = { type = "int64" }
 	lobby_to_join = { type = "string" }
 	lobby_type = { type = "int", min = 1, max = 2 }
-	local_player_id = { type = "int", min = 0, max = 32 } // MODIFIED
+	local_player_id = { type = "int", min = 0, max = 15 }
 	104249E3 = { type = "int", min = 1, max = 4096 }
 	locked_directors_functions_array = { type = "array", max_size = 10, element = "small_lookup" }
 	lookup = { type = "int", min = 1, max = 4096 }
@@ -131,18 +131,18 @@ types = {
 	number = { type = "int", min = -100, max = 155 }
 	objective_socket_id = { type = "int", min = 1, max = 16 }
 	packed_breed_go_ids = { type = "array", max_size = 128, element = "game_object_id" }
-	party_array = { type = "array", max_size = 32, element = "small_lookup" } // MODIFIED
-	party_id = { type = "int", min = 0, max = 32 } // MODIFIED
+	party_array = { type = "array", max_size = 8, element = "small_lookup" }
+	party_id = { type = "int", min = 0, max = 15 }
 	party_slot_id = { type = "int", min = 0, max = 63 }
 	payload_speed = { type = "float", min = -10, max = 10, bits = 20, tolerance = 0.01 }
 	payload_spline_index = { type = "int", min = 1, max = 256 }
 	payload_spline_subdivisions = { type = "int", min = 1, max = 16 }
 	payload_spline_t = { type = "float", min = 0, max = 1 }
 	peer_id = { type = "int64" }
-	peer_id_table = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
+	peer_id_table = { type = "array", max_size = 8, element = "peer_id" }
 	percent = { type = "int", min = 0, max = 127 }
 	percentage = { type = "float", min = 0, max = 1, bits = 20 }
-	percentage_array = { type = "array", max_size = 32, element = "percentage" } // MODIFIED
+	percentage_array = { type = "array", max_size = 8, element = "percentage" }
 	performance_title_amount_table = { type = "array", max_size = 4, element = "uint_16" }
 	performance_title_table = { type = "array", max_size = 4, element = "lookup" }
 	ping = { type = "int", min = 0, max = 1023 }
@@ -237,14 +237,14 @@ types = {
 	vortex_template_id = { type = "int", min = 1, max = 8 }
 	vote_data_deed = { type = "array", max_size = 12, element = "weapon_id" }
 	vote_data_lookup = { type = "array", max_size = 12, element = "lookup" }
-	vote_data_peer_id = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
+	vote_data_peer_id = { type = "array", max_size = 4, element = "peer_id" }
 	weapon_id = { type = "int", min = 1, max = 16384 }
 	weave_bar_score = { type = "float", min = 0, max = 100 }
 	weave_buff_lookup_array = { type = "array", max_size = 32, element = "lookup" }
 	weave_buff_value_array = { type = "array", max_size = 32, element = "buff_value" }
 	weave_damage_taken = { type = "float", min = 0, max = 16383, bits = 15 }
 	weave_item_template_names = { type = "int", min = 1, max = 16 }
-	weave_num_players = { type = "int", min = 1, max = 32 } // MODIFIED
+	weave_num_players = { type = "int", min = 1, max = 4 }
 	weave_objective_index = { type = "int", min = 0, max = 7 }
 	weave_objective_names = { type = "int", min = 1, max = 256 }
 	weave_score = { type = "int", min = 0, max = 32767 }
@@ -262,6 +262,21 @@ objects = {
 			{ name = "husk_unit", type = "husk_unit" }
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
+		]
+	}
+	orb_pickup_unit = {
+		priority = 1
+		update_rate = 10
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "pickup_name", type = "lookup" }
+			{ name = "has_physics", type = "bool" }
+			{ name = "spawn_type", type = "lookup" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "orb_flight_target_position", type = "position" }
+			{ name = "2C3CC3B3", type = "bool" }
 		]
 	}
 	positioned_prop_unit = {
@@ -423,6 +438,16 @@ objects = {
 			{ name = "player_id", type = "game_object_id" }
 		]
 	}
+	belakor_crystal_socket = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+		]
+	}
 	bot_player = {
 		priority = 1
 		update_rate = 3
@@ -489,6 +514,37 @@ objects = {
 			{ name = "go_type", type = "game_object_type" }
 			{ name = "value", type = "weave_bar_score" }
 			{ name = "objective_name", type = "weave_objective_names" }
+		]
+	}
+	belakor_crystal_throw = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "network_position", type = "int_position" }
+			{ name = "network_rotation", type = "int_rotation" }
+			{ name = "network_velocity", type = "int_velocity" }
+			{ name = "network_angular_velocity", type = "int_velocity" }
+			{ name = "debug_pos", type = "position" }
+			{ name = "pickup_name", type = "lookup" }
+			{ name = "has_physics", type = "bool" }
+			{ name = "spawn_type", type = "lookup" }
+			{ name = "60E099D7", type = "bool" }
+			{ name = "ECA01F48", type = "game_object_id" }
+		]
+	}
+	deus_belakor_locus = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "deus_belakor_locus_state", type = "uint_8" }
 		]
 	}
 	ai_true_flight_projectile_unit_without_raycast = {
@@ -600,6 +656,7 @@ objects = {
 			{ name = "owner_player_id", type = "game_object_id" }
 			{ name = "health", type = "health" }
 			{ name = "wall_index", type = "small_lookup" }
+			{ name = "owner_unit_id", type = "game_object_id" }
 		]
 	}
 	liquid_aoe_unit = {
@@ -656,6 +713,32 @@ objects = {
 			{ name = "painting_index", type = "lookup" }
 		]
 	}
+	shadow_dagger_unit = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "speed", type = "projectile_speed" }
+			{ name = "angle", type = "projectile_angle" }
+			{ name = "gravity_settings", type = "lookup" }
+			{ name = "target_vector", type = "position" }
+			{ name = "initial_position", type = "position" }
+			{ name = "trajectory_template_name", type = "lookup" }
+			{ name = "owner_unit", type = "game_object_id" }
+			{ name = "source_attacker_unit", type = "game_object_id" }
+			{ name = "6A4C1C29", type = "bool" }
+			{ name = "rotation_speed", type = "rot_int" }
+			{ name = "C68C0018", type = "clock_time" }
+			{ name = "785825D3", type = "bool" }
+			{ name = "8E4D2AB1", type = "1E7C6F15" }
+			{ name = "collision_filter", type = "lookup" }
+			{ name = "impact_template_name", type = "lookup" }
+			{ name = "damage_source_id", type = "damage_source_id" }
+		]
+	}
 	ai_true_flight_projectile_unit = {
 		priority = 1
 		update_rate = 1
@@ -694,6 +777,17 @@ objects = {
 			{ name = "pickup_name", type = "lookup" }
 			{ name = "has_physics", type = "bool" }
 			{ name = "spawn_type", type = "lookup" }
+		]
+	}
+	arena_belakor_big_statue_health = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "health", type = "health" }
 		]
 	}
 	ai_unit_tentacle = {
@@ -1082,6 +1176,17 @@ objects = {
 			{ name = "owner_unit_id", type = "game_object_id" }
 		]
 	}
+	shadow_homing_skulls_spawner = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "health", type = "health" }
+		]
+	}
 	weave_target_unit = {
 		priority = 1
 		update_rate = 1
@@ -1308,6 +1413,20 @@ objects = {
 			{ name = "rotation", type = "rotation" }
 		]
 	}
+	belakor_totem = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "health", type = "health" }
+			{ name = "breed_name", type = "breed" }
+			{ name = "bt_action_name", type = "bt_action_name" }
+			{ name = "side_id", type = "side_id" }
+		]
+	}
 	damage_wave_unit = {
 		priority = 1
 		update_rate = 1
@@ -1460,6 +1579,21 @@ objects = {
 			{ name = "position", type = "position" }
 			{ name = "yaw_rot", type = "dummy_yaw_rotation" }
 			{ name = "uniform_scale", type = "dummy_uniform_scale" }
+		]
+	}
+	shadow_skull_unit = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "health", type = "health" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "velocity", type = "enemy_velocity" }
+			{ name = "breed_name", type = "breed" }
+			{ name = "bt_action_name", type = "bt_action_name" }
+			{ name = "side_id", type = "side_id" }
 		]
 	}
 	weave_doom_wheel_unit = {
@@ -1704,6 +1838,22 @@ objects = {
 			{ name = "scale", type = "scale" }
 			{ name = "objective_name", type = "versus_objective_names" }
 			{ name = "timer", type = "time" }
+		]
+	}
+	belakor_crystal = {
+		priority = 1
+		update_rate = 1
+		fields = [
+			{ name = "go_type", type = "game_object_type" }
+			{ name = "husk_unit", type = "husk_unit" }
+			{ name = "position", type = "position" }
+			{ name = "rotation", type = "rotation" }
+			{ name = "debug_pos", type = "position" }
+			{ name = "pickup_name", type = "lookup" }
+			{ name = "has_physics", type = "bool" }
+			{ name = "spawn_type", type = "lookup" }
+			{ name = "60E099D7", type = "bool" }
+			{ name = "ECA01F48", type = "game_object_id" }
 		]
 	}
 	overpowering_blob_unit = {
@@ -2196,6 +2346,16 @@ messages = {
 			"int_32"
 		]
 	}
+	rpc_spawn_orb = {
+		session_bound = true
+		args = [
+			"lookup"
+			"peer_id"
+			"position"
+			"position"
+			"angle"
+		]
+	}
 	rpc_set_animation_rotation_scale = {
 		session_bound = true
 		args = [
@@ -2347,6 +2507,12 @@ messages = {
 	}
 	rpc_to_client_sync_session_id = {
 		session_bound = true
+		args = [
+			"string"
+		]
+	}
+	rpc_deus_grant_end_of_level_power_ups = {
+		session_bound = false
 		args = [
 			"string"
 		]
@@ -2812,6 +2978,13 @@ messages = {
 			"unit_node"
 			"bool"
 			"uint_8"
+		]
+	}
+	rpc_flow_event = {
+		session_bound = true
+		args = [
+			"game_object_id"
+			"lookup"
 		]
 	}
 	rpc_anim_event = {
@@ -4192,6 +4365,12 @@ messages = {
 			"buff_array"
 		]
 	}
+	rpc_play_2d_audio_unit_event_for_peer = {
+		session_bound = true
+		args = [
+			"sound_event"
+		]
+	}
 	rpc_set_matchmaking = {
 		session_bound = false
 		args = [
@@ -4200,6 +4379,7 @@ messages = {
 			"lookup"
 			"lookup"
 			"bool"
+			"lookup"
 		]
 	}
 	rpc_respawn_confirmed = {
@@ -5020,11 +5200,12 @@ messages = {
 	rpc_deus_setup_run = {
 		session_bound = false
 		args = [
-			"run_id"
-			"run_seed"
+			"6B47E54D"
+			"32F03ED4"
 			"difficulty_lookup"
 			"lookup"
 			"lookup"
+			"bool"
 		]
 	}
 	rpc_give_equipment = {
