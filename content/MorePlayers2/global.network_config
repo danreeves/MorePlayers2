@@ -1,6 +1,8 @@
 reliable_send_buffer_size=98304
 reliable_receive_buffer_size=32768
 
+game_object_max_update_size=512 // MODIFIED
+
 types = {
 	action = { type = "int", min = 1, max = 64 }
 	actor_index = { type = "int", min = 0, max = 255 }
@@ -106,7 +108,7 @@ types = {
 	lobby_id = { type = "int64" }
 	lobby_to_join = { type = "string" }
 	lobby_type = { type = "int", min = 1, max = 2 }
-	local_player_id = { type = "int", min = 0, max = 15 }
+	local_player_id = { type = "int", min = 1, max = 32 } // MODIFIED
 	104249E3 = { type = "int", min = 1, max = 4096 }
 	locked_directors_functions_array = { type = "array", max_size = 10, element = "small_lookup" }
 	lookup = { type = "int", min = 1, max = 4096 }
@@ -131,15 +133,15 @@ types = {
 	number = { type = "int", min = -100, max = 155 }
 	objective_socket_id = { type = "int", min = 1, max = 16 }
 	packed_breed_go_ids = { type = "array", max_size = 128, element = "game_object_id" }
-	party_array = { type = "array", max_size = 8, element = "small_lookup" }
-	party_id = { type = "int", min = 0, max = 15 }
+	party_array = { type = "array", max_size = 32, element = "small_lookup" } // MODIFIED
+	party_id = { type = "int", min = 0, max = 32 } // MODIFIED
 	party_slot_id = { type = "int", min = 0, max = 63 }
 	payload_speed = { type = "float", min = -10, max = 10, bits = 20, tolerance = 0.01 }
 	payload_spline_index = { type = "int", min = 1, max = 256 }
 	payload_spline_subdivisions = { type = "int", min = 1, max = 16 }
 	payload_spline_t = { type = "float", min = 0, max = 1 }
 	peer_id = { type = "int64" }
-	peer_id_table = { type = "array", max_size = 8, element = "peer_id" }
+	peer_id_table = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
 	percent = { type = "int", min = 0, max = 127 }
 	percentage = { type = "float", min = 0, max = 1, bits = 20 }
 	percentage_array = { type = "array", max_size = 8, element = "percentage" }
@@ -237,14 +239,14 @@ types = {
 	vortex_template_id = { type = "int", min = 1, max = 8 }
 	vote_data_deed = { type = "array", max_size = 12, element = "weapon_id" }
 	vote_data_lookup = { type = "array", max_size = 12, element = "lookup" }
-	vote_data_peer_id = { type = "array", max_size = 4, element = "peer_id" }
+	vote_data_peer_id = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
 	weapon_id = { type = "int", min = 1, max = 16384 }
 	weave_bar_score = { type = "float", min = 0, max = 100 }
 	weave_buff_lookup_array = { type = "array", max_size = 32, element = "lookup" }
 	weave_buff_value_array = { type = "array", max_size = 32, element = "buff_value" }
 	weave_damage_taken = { type = "float", min = 0, max = 16383, bits = 15 }
 	weave_item_template_names = { type = "int", min = 1, max = 16 }
-	weave_num_players = { type = "int", min = 1, max = 4 }
+	weave_num_players = { type = "int", min = 1, max = 32 } // MODIFIED
 	weave_objective_index = { type = "int", min = 0, max = 7 }
 	weave_objective_names = { type = "int", min = 1, max = 256 }
 	weave_score = { type = "int", min = 0, max = 32767 }
@@ -276,7 +278,7 @@ objects = {
 			{ name = "position", type = "position" }
 			{ name = "rotation", type = "rotation" }
 			{ name = "orb_flight_target_position", type = "position" }
-			{ name = "2C3CC3B3", type = "bool" }
+			{ name = "flight_enabled", type = "bool" }
 		]
 	}
 	positioned_prop_unit = {
