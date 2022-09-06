@@ -108,7 +108,7 @@ types = {
 	lobby_id = { type = "int64" }
 	lobby_to_join = { type = "string" }
 	lobby_type = { type = "int", min = 1, max = 2 }
-	local_player_id = { type = "int", min = 1, max = 32 } // MODIFIED
+	local_player_id = { type = "int", min = 0, max = 32 } // MODIFIED
 	104249E3 = { type = "int", min = 1, max = 4096 }
 	locked_directors_functions_array = { type = "array", max_size = 10, element = "small_lookup" }
 	lookup = { type = "int", min = 1, max = 4096 }
@@ -144,7 +144,7 @@ types = {
 	peer_id_table = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
 	percent = { type = "int", min = 0, max = 127 }
 	percentage = { type = "float", min = 0, max = 1, bits = 20 }
-	percentage_array = { type = "array", max_size = 8, element = "percentage" }
+	percentage_array = { type = "array", max_size = 32, element = "percentage" } // MODIFIED
 	performance_title_amount_table = { type = "array", max_size = 4, element = "uint_16" }
 	performance_title_table = { type = "array", max_size = 4, element = "lookup" }
 	ping = { type = "int", min = 0, max = 1023 }
@@ -160,7 +160,7 @@ types = {
 	position_single = { type = "float", min = -655.35, max = 655.36, bits = 17, tolerance = 0.01 }
 	power_level = { type = "int", min = 0, max = 2047 }
 	proc_function_lookup = { type = "int", min = 1, max = 512 }
-	profile_array = { type = "array", max_size = 32, element = "peer_id" }
+	profile_array = { type = "array", max_size = 32, element = "peer_id" } // MODIFIED
 	profile_index = { type = "int", min = 0, max = 31 }
 	progress = { type = "float", min = 0, max = 1 }
 	projectile_angle = { type = "int", min = -512, max = 1535 }
